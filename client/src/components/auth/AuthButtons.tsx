@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store.ts";
 import { logout } from "../../features/auth/authSlice.ts";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface AuthButtonsProps {
   isMobile?: boolean;
@@ -70,13 +71,17 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Link to="/login" className="w-full">
-          <Button
-            variant="outline"
-            className={`cursor-pointer ${isMobile ? "w-full" : ""}`}
+        <Link to="/login">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative group"
           >
-            Sign In
-          </Button>
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-60 group-hover:opacity-100 transition duration-200" />
+            <div className="relative bg-[#6FFFB4] text-[#0a101f] px-6 py-2 rounded-full font-semibold group-hover:bg-[#8FFFCC] transition-all cursor-pointer">
+              Sign in
+            </div>
+          </motion.button>
         </Link>
       )}
     </div>

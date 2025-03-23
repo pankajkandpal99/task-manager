@@ -1,8 +1,9 @@
 import { NavbarItemType } from "../types/navbar-types/navbarTypes";
 
-export const navbarItems: NavbarItemType[] = [
+export const NAVBAR_ITEMS: NavbarItemType[] = [
   { id: "1", label: "Home", href: "/" },
-  { id: "2", label: "About", href: "/about" },
-  { id: "3", label: "Services", href: "/services" },
-  { id: "4", label: "Contact", href: "/contact" },
+  { id: "2", label: "Games", href: "/games" },
+  { id: "3", label: "Contests", href: "/contests" },
+  { id: "4", label: "Leaderboard", href: "/leaderboard" },
+  { id: "5", label: "Support", href: "/support" },
 ];
