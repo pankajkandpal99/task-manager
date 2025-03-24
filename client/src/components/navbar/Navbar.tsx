@@ -13,19 +13,11 @@ interface iAppNavbarProps {
 
 export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
   return (
-    <nav className="sticky top-0 z-50 bg-[#0a101f]/90 backdrop-blur-md py-4 border-b border-[#1e293b]/30">
+    <nav className="sticky top-0 z-40 bg-[#0a101f]/90 backdrop-blur-md py-4 border-b border-[#1e293b]/30">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
           <motion.div whileHover={{ scale: 1.05 }} className="relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-70 group-hover:opacity-100 transition duration-200" />
-            {/* <div className="relative bg-[#0a101f] rounded-full p-1">
-              <CompanyLogo
-                src="/logo.webp"
-                alt="MultyComm"
-                size="md"
-                type="image"
-              />
-            </div> */}
             <div className="relative">
               <div className="absolute -inset-1 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-70 group-hover:opacity-100 transition duration-200"></div>
               <div className="relative bg-[#0a101f] rounded-full p-1">

@@ -1,42 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import { NavbarItem } from "./NavbarItem";
 import { NavbarItemType } from "../../types/navbar-types/navbarTypes";
 import AuthButtons from "../auth/AuthButtons";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, User } from "lucide-react";
+import { motion } from "framer-motion";
+import { X, User, Menu } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerPortal,
+  DrawerTrigger,
+} from "../ui/drawer";
 
 interface MobileMenuProps {
   items: NavbarItemType[];
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const { user, token } = useSelector((state: RootState) => state.auth);
-
-  const menuVariants = {
-    open: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-        staggerChildren: 0.05,
-        delayChildren: 0.1,
-      },
-    },
-    closed: {
-      opacity: 0,
-      x: "100%",
-      transition: {
-        duration: 0.2,
-        staggerChildren: 0.05,
-        staggerDirection: -1,
-      },
-    },
-  };
 
   const itemVariants = {
     open: {
@@ -56,80 +39,45 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
   const isGuest = !user || !token;
 
   return (
-    <div className="lg:hidden">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="text-white p-2 rounded-lg hover:bg-[#121a2a]/50 transition-colors"
-        aria-label="Toggle mobile menu"
-      >
-        {isOpen ? (
-          <X size={24} strokeWidth={2} />
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-6 h-6"
+    <div className="lg:hidden ">
+      <Drawer>
+        <DrawerTrigger asChild>
+          <button
+            className="text-white p-2 rounded-lg hover:bg-[#121a2a]/50 transition-colors"
+            aria-label="Toggle mobile menu"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        )}
-      </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
-              onClick={() => setIsOpen(false)}
-            />
-
-            {/* Menu Content */}
-            <motion.div
-              variants={menuVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
-              className="fixed top-0 right-0 min-h-screen w-72 bg-[#0a101f] border-l border-[#1e293b] shadow-2xl z-50 overflow-y-auto"
-            >
-              <div className="p-4 h-full flex flex-col">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <div className="relative">
-                      <div className="absolute -inset-1 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-70" />
-                      <div className="relative bg-[#0a101f] rounded-full p-1">
-                        <img
-                          src="https://img.icons8.com/fluency/96/controller.png"
-                          className="h-8 w-8"
-                          alt="Logo"
-                        />
-                      </div>
+            <Menu size={24} strokeWidth={2} />
+          </button>
+        </DrawerTrigger>
+        <DrawerPortal>
+          <DrawerContent className="fixed inset-y-0 right-0 h-full w-72 max-h-screen bg-[#0a101f] border-l border-[#1e293b] shadow-2xl z-50">
+            <div className="h-full flex flex-col max-h-screen">
+              <div className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-70" />
+                    <div className="relative bg-[#0a101f] rounded-full p-1">
+                      <img
+                        src="https://img.icons8.com/fluency/96/controller.png"
+                        className="h-8 w-8"
+                        alt="Logo"
+                      />
                     </div>
-                    <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6FFFB4] to-[#3694FF]">
-                      MultyComm
-                    </span>
                   </div>
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="p-2 text-[#94a3b8] hover:text-white rounded-full hover:bg-[#121a2a] transition-colors"
-                    aria-label="Close menu"
-                  >
-                    <X size={20} />
-                  </button>
+                  <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6FFFB4] to-[#3694FF]">
+                    MultyComm
+                  </span>
                 </div>
+                <DrawerClose className="p-2 text-[#94a3b8] hover:text-white rounded-full hover:bg-[#121a2a] transition-colors">
+                  <X size={20} />
+                </DrawerClose>
+              </div>
 
-                {/* User Profile Information - Works for both guest and logged-in users */}
+              <div className="flex-1 overflow-y-auto px-4">
+                {/* User Profile Information */}
                 <motion.div
+                  initial="closed"
+                  animate="open"
                   variants={itemVariants}
                   className={`mb-4 bg-[#121a2a] p-4 rounded-lg border border-[#1e293b] shadow-md ${
                     isGuest ? "opacity-75" : ""
@@ -176,44 +124,46 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                 <div className="h-px w-full bg-gradient-to-r from-[#6FFFB4]/20 via-[#3694FF]/20 to-[#6FFFB4]/20 mb-6"></div>
 
                 {/* Menu Items with animation */}
-                <nav className="flex-1 space-y-1">
+                <nav className="space-y-1 pb-6">
                   {items.map((item, index) => (
                     <motion.div
                       key={item.id}
+                      initial="closed"
+                      animate="open"
                       variants={itemVariants}
                       custom={index}
-                      className="overflow-hidden"
                     >
-                      <div className="py-1 px-2 rounded-lg hover:bg-[#121a2a]/60 transition-colors">
-                        <NavbarItem
-                          item={item}
-                          isMobile
-                          onClick={() => setIsOpen(false)}
-                        />
-                      </div>
+                      <DrawerClose asChild>
+                        <div className="py-1 px-2 rounded-lg hover:bg-[#121a2a]/60 transition-colors">
+                          <NavbarItem item={item} isMobile />
+                        </div>
+                      </DrawerClose>
                     </motion.div>
                   ))}
                 </nav>
 
                 {/* Decorative elements */}
-                <div className="my-6 relative">
+                <div className="relative my-4">
                   <div className="absolute left-0 w-32 h-32 bg-[#6FFFB4]/5 rounded-full blur-xl -translate-x-1/2"></div>
                   <div className="absolute right-0 w-24 h-24 bg-[#3694FF]/5 rounded-full blur-xl translate-x-1/2"></div>
                   <div className="h-px w-full bg-[#1e293b] relative"></div>
                 </div>
+              </div>
 
-                {/* Mobile Auth Buttons */}
+              {/* Fixed bottom section for auth buttons */}
+              <div className="border-t border-[#1e293b]/30 bg-[#0a101f] p-4">
                 <motion.div
+                  initial="closed"
+                  animate="open"
                   variants={itemVariants}
-                  className="mb-auto bottom-0"
                 >
                   <AuthButtons isMobile />
                 </motion.div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            </div>
+          </DrawerContent>
+        </DrawerPortal>
+      </Drawer>
     </div>
   );
 };

@@ -7,7 +7,7 @@ export const MainLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar items={NAVBAR_ITEMS} />
-      <main className="flex-1 container mx-auto p-4">
+      <main className="flex-1 container mx-auto">
         <Outlet />
       </main>
     </div>
