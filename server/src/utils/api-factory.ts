@@ -1,30 +1,28 @@
 import { RequestHandler } from "express";
-import { ParsedQs } from "qs";
 import { RequestContext } from "../middleware/context";
-import { z, ZodSchema } from "zod";
-import { TransactionHooks } from "../hooks/preHooks";
-import { AuditHooks } from "../hooks/postHooks";
+import { ParsedQs } from "qs";
+import { ZodSchema } from "zod";
+import { AuditHooks } from "../hooks/audit";
 import { requireAuth } from "../middleware/auth";
-import { transactionMiddleware } from "./transactions";
-import { HttpResponse } from "./service-response";
+import { HttpResponse } from "../utils/service-response";
+import { TransactionHooks } from "../hooks/transactions";
 
-type ApiHandlerOptions<TBody = any, TQuery = any> = {
-  bodySchema?: ZodSchema<TBody>;
-  querySchema?: ZodSchema<TQuery>;
+type ApiHandlerOptions = {
+  bodySchema?: ZodSchema;
+  querySchema?: ZodSchema;
   requireAuth?: boolean;
   useTransaction?: boolean;
-  preHooks?: Array<(context: RequestContext) => Promise<void>>;
-  postHooks?: Array<(context: RequestContext) => Promise<void>>;
+  auditLog?: boolean;
 };
 
-export function createApiHandler<TBody, TQuery>(
+export function createApiHandler(
   handler: (context: RequestContext) => Promise<any>,
-  options: ApiHandlerOptions<TBody, TQuery> = {}
+  options: ApiHandlerOptions = {}
 ): RequestHandler[] {
   const middlewares: RequestHandler[] = [];
 
   // Authentication
-  if (options.requireAuth) {
+  if (options.requireAuth !== false) {
     middlewares.push(requireAuth);
   }
 
@@ -42,57 +40,44 @@ export function createApiHandler<TBody, TQuery>(
         }
         next();
       } catch (error) {
-        if (error instanceof z.ZodError) {
-          HttpResponse.error(res, "Validation failed", 400, error.errors);
-        } else {
-          HttpResponse.error(res, "Validation failed", 400);
-        }
+        HttpResponse.error(res, "Validation failed", 400, error as any);
       }
     });
   }
 
-  // Transaction middleware
-  if (options.useTransaction) {
-    middlewares.push(transactionMiddleware);
-  }
-
-  // Main handler
   middlewares.push(async (req, res) => {
+    const context = req.context as RequestContext;
+    let transactionStarted = false;
+
     try {
-      const context = req.context;
-
-      // Default pre-hooks
-      const preHooks = [
-        ...(options.preHooks || []),
-        ...(options.useTransaction ? [TransactionHooks.startTransaction] : []),
-      ];
-
-      // Execute pre-hooks
-      for (const hook of preHooks) {
-        await hook(context);
+      // Start transaction if needed
+      if (options.useTransaction) {
+        await TransactionHooks.startTransaction(context);
+        transactionStarted = true;
       }
 
-      // Execute main handler
+      // Execute the handler with transaction-aware context
       const result = await handler(context);
 
-      // Default post-hooks
-      const postHooks = [
-        ...(options.postHooks || []),
-        AuditHooks.logOperation,
-        ...(options.useTransaction ? [TransactionHooks.commitTransaction] : []),
-      ];
-
-      // Execute post-hooks
-      for (const hook of postHooks) {
-        await hook(context);
+      // Commit transaction if we started one
+      if (transactionStarted) {
+        await TransactionHooks.commitTransaction(context);
       }
 
+      // Audit logging (if not explicitly disabled)
+      if (options.auditLog !== false) {
+        await AuditHooks.logOperation(context);
+      }
+
+      // Send successful response
       HttpResponse.send(res, result);
     } catch (error) {
-      // Handle transaction rollback
-      if (options.useTransaction) {
-        await TransactionHooks.rollbackTransaction(req.context);
+      if (transactionStarted) {
+        await TransactionHooks.rollbackTransaction(context);
       }
+
+      // Log the error
+      await AuditHooks.logError(context, error as any);
 
       HttpResponse.handleResult(res, error);
     }

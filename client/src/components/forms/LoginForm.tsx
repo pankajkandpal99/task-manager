@@ -41,8 +41,6 @@ const LoginForm: React.FC = () => {
     try {
       console.log("Form data:", data);
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      // Example: If login fails, set error
-      // throw new Error("Invalid credentials");
       console.log("Login successful");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong!");
@@ -55,7 +53,7 @@ const LoginForm: React.FC = () => {
     <div className="flex items-center justify-center min-h-screen px-4 py-8 sm:px-6 md:px-8">
       <Card className="w-full max-w-md mx-auto shadow-lg">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-xl text-blue-600 sm:text-2xl font-bold text-center">
+          <CardTitle className="text-xl text-primary sm:text-2xl font-bold text-center">
             Login
           </CardTitle>
           <CardDescription className="text-center">
@@ -99,7 +97,7 @@ const LoginForm: React.FC = () => {
                       </FormLabel>
                       <Link
                         to="#"
-                        className="text-xs hover:underline text-blue-600"
+                        className="text-xs hover:underline text-primary"
                       >
                         Forgot password?
                       </Link>
@@ -119,7 +117,7 @@ const LoginForm: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full mt-6 bg-blue-600 hover:bg-blue-500 cursor-pointer"
+                className="w-full mt-6 bg-primary hover:bg-green-400 cursor-pointer"
                 disabled={loading}
               >
                 {loading ? <Loader size="small" /> : "Log In"}
@@ -128,10 +126,10 @@ const LoginForm: React.FC = () => {
           </Form>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-muted-foreground">
-          <span>Don't have an account?</span>
+          <span className="">Don't have an account?</span>
           <Link
             to="/register"
-            className="text-blue-600 font-medium hover:underline"
+            className="text-primary font-medium hover:underline"
           >
             Sign up
           </Link>

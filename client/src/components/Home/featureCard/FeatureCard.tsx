@@ -1,10 +1,9 @@
-// FeatureCard.tsx
 import React, { ReactNode } from "react";
 
 interface FeatureCardProps {
-  icon: ReactNode;
-  title: string;
-  description: string;
+  icon?: ReactNode;
+  title?: string;
+  description?: string;
   variant?: "default" | "boxed";
 }
 

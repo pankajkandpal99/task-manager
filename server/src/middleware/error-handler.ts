@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { ResponseService } from "../services/response.service";
 import { ZodError } from "zod";
 import { StatusCodes } from "../config/constants";
 import { logger } from "../utils/logger";
+import { ApiResponseService } from "../services/response.service";
 
 export const errorHandler = (
   err: Error,
@@ -14,7 +14,7 @@ export const errorHandler = (
 
   // Handle Zod validation errors
   if (err instanceof ZodError) {
-    return ResponseService.error(
+    return ApiResponseService.error(
       res,
       "Validation Error",
       StatusCodes.BAD_REQUEST,
@@ -24,7 +24,7 @@ export const errorHandler = (
 
   // Handle JWT errors
   if (err.name === "JsonWebTokenError") {
-    return ResponseService.error(
+    return ApiResponseService.error(
       res,
       "Invalid Token",
       StatusCodes.UNAUTHORIZED
@@ -32,7 +32,7 @@ export const errorHandler = (
   }
 
   // Handle generic errors
-  ResponseService.error(
+  ApiResponseService.error(
     res,
     process.env.NODE_ENV === "production"
       ? "Internal Server Error"

@@ -13,14 +13,4 @@ prisma.$on("warn", (e: { message: string }) => logger.warn(e.message));
 prisma.$on("info", (e: { message: string }) => logger.info(e.message));
 prisma.$on("error", (e: { message: string }) => logger.error(e.message));
 
-export const connectDB = async () => {
-  try {
-    await prisma.$connect();
-    logger.info("Database connected successfully");
-  } catch (error) {
-    logger.error("Database connection error:", error);
-    process.exit(1);
-  }
-};
-
 export default prisma;

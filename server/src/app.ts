@@ -2,12 +2,13 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import { loadEnv } from "./config/env";
-import { PrismaClient } from "@prisma/client";
 import { contextMiddleware } from "./middleware/context";
-import routes from "./routes";
+import { AuditHooks } from "./hooks/audit";
 import { errorHandler } from "./middleware/error-handler";
+import { PrismaClient } from "@prisma/client";
+import { TransactionHooks } from "./hooks/transactions";
+import baseRouter from "./api/v1/routes";
 
-const env = loadEnv();
 const prisma = new PrismaClient();
 
 export const createApp = () => {
@@ -20,9 +21,9 @@ export const createApp = () => {
   app.use(contextMiddleware(prisma));
 
   // Routes
-  app.use("/api/v1", routes);
+  app.use("/api/v1", baseRouter);
 
-  // Error handling
+  // Error Handling
   app.use(errorHandler);
 
   return app;

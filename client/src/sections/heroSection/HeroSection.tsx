@@ -1,7 +1,7 @@
 import React from "react";
 import HeroContent from "./heroContent/HeroContent";
 import TournamentCard from "../../components/Home/tournamentsCard/TournamentCard";
-import FeatureCards from "../../components/Home/featureCard/FeatureCard";
+import FeatureCard from "../../components/Home/featureCard/FeatureCard";
 
 const HeroSection: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const HeroSection: React.FC = () => {
           <TournamentCard />
         </div>
 
-        <FeatureCards />
+        <FeatureCard />
       </div>
     </section>
   );

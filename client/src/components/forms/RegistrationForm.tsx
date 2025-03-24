@@ -58,7 +58,7 @@ const RegisterForm: React.FC = () => {
     <div className="flex items-center justify-center p-4 sm:px-6 md:px-8">
       <Card className="w-full max-w-md mx-auto shadow-lg p-4 sm:p-6">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-blue-600">
+          <CardTitle className="text-2xl font-bold text-primary">
             Create an Account
           </CardTitle>
           <CardDescription>
@@ -146,7 +146,7 @@ const RegisterForm: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full mt-4 bg-blue-600 hover:bg-blue-500 cursor-pointer"
+                className="w-full mt-4 bg-primary hover:bg-green-400 cursor-pointer"
                 disabled={loading}
               >
                 {loading ? <Loader size="small" /> : "Register"}
@@ -159,7 +159,7 @@ const RegisterForm: React.FC = () => {
           <span>Already have an account?</span>
           <Link
             to="/login"
-            className="text-blue-600 font-medium hover:underline"
+            className="text-primary font-medium hover:underline"
           >
             Log in
           </Link>

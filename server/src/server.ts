@@ -1,6 +1,6 @@
 import { createApp } from "./app";
 import { loadEnv } from "./config/env";
-import prisma, { connectDB } from "./prisma/client";
+import { connectDB, disconnectDB } from "./lib/db";
 import { logger } from "./utils/logger";
 
 const startServer = async () => {
@@ -17,7 +17,7 @@ const startServer = async () => {
     process.on("SIGTERM", () => {
       logger.info("SIGTERM received: closing server");
       server.close(async () => {
-        await prisma.$disconnect();
+        await disconnectDB();
         logger.info("Server closed");
         process.exit(0);
       });

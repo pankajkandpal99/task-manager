@@ -7,8 +7,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+  GUEST // For tracking guest users if needed
+}
+
 model User {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  email       String
-  phoneNumber String?
+  id             String     @id @default(uuid())
+  email          String?    @unique
+  password       String?
+  phoneNumber    String?
+  role           Role       @default(USER)
+  username       String?    @unique
+  avatar         String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  lastLogin      DateTime?
+  lastActive     DateTime?
+  isVerified     Boolean    @default(false)
+  provider       String? // "google", "facebook" etc
+  providerId     String?
+  gameProgress   Json?
+  preferences    Json?
+  sessions       Session[]
+  stats          UserStats?
+  isGuest        Boolean    @default(false)
+  guestId        String?    @unique
+  guestExpiresAt DateTime?
+
+  @@map("users")
+}
+
+model Session {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  token       String   @unique
+  expiresAt   DateTime
+  ipAddress   String?
+  userAgent   String?
+  isActive    Boolean  @default(true)
+  loginMethod String?
+  createdAt   DateTime @default(now())
+
+  @@map("sessions")
+}
+
+model UserStats {
+  id           String @id @default(uuid())
+  userId       String @unique
+  user         User   @relation(fields: [userId], references: [id])
+  gamesPlayed  Int    @default(0)
+  wins         Int    @default(0)
+  losses       Int    @default(0)
+  highScores   Json? // Could store high scores per game
+  achievements Json? // Achievements earned
+
+  @@map("user_stats")
 }

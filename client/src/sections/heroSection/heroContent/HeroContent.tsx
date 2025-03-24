@@ -13,13 +13,12 @@ const HeroContent: React.FC = () => {
       >
         <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
           Play & Win <br />
-          <span className="text-[#6FFFB4] drop-shadow-lg">Real Cash</span>
+          <span className="text-primary drop-shadow-lg">Real Cash</span>
         </h1>
-        <p className="text-xl text-[#94a3b8] mb-8 max-w-lg">
+        <p className="text-xl text-secondary mb-8 max-w-lg">
           Join India's most trusted skill-based gaming platform. Use your skills
           to win big and withdraw instantly!
         </p>
-
         <ActionButtons />
         <UserStats />
       </motion.div>

@@ -1,19 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { lazy } from "react";
 
-const delayImport = (
-  importFunction: () => Promise<{ default: React.ComponentType<any> }>
-) => {
-  return new Promise<{ default: React.ComponentType<any> }>((resolve) => {
-    setTimeout(() => resolve(importFunction()), 1000);
-  });
-};
+const Home = lazy(() => import("../pages/Home"));
+const About = lazy(() => import("../pages/About"));
+const Games = lazy(() => import("../pages/Games"));
+const Contest = lazy(() => import("../pages/Contest"));
+const Leaderboard = lazy(() => import("../pages/Leaderboard"));
 
-const Home = lazy(() => delayImport(() => import("../pages/Home")));
-const About = lazy(() => delayImport(() => import("../pages/About")));
-const Services = lazy(() => delayImport(() => import("../pages/Services")));
-const Contact = lazy(() => delayImport(() => import("../pages/Contact")));
-const NotFound = lazy(() => delayImport(() => import("../pages/NotFound")));
+const Support = lazy(() => import("../pages/Support"));
+const Services = lazy(() => import("../pages/Services"));
+const Contact = lazy(() => import("../pages/Contact"));
+const NotFound = lazy(() => import("../pages/NotFound"));
 const Login = lazy(() => import("../pages/Login"));
 const Register = lazy(() => import("../pages/Register"));
 
@@ -25,6 +21,10 @@ interface RouteConfig {
 export const publicRoutes: RouteConfig[] = [
   { path: "/", element: Home },
   { path: "/about", element: About },
+  { path: "/games", element: Games },
+  { path: "/leaderboard", element: Leaderboard },
+  { path: "/contest", element: Contest },
+  { path: "/support", element: Support },
   { path: "/services", element: Services },
   { path: "/contact", element: Contact },
 ];
