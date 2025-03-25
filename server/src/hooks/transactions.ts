@@ -1,30 +1,39 @@
 import { RequestContext } from "../middleware/context";
-import { PrismaClient } from "@prisma/client";
+import { ClientSession } from "mongoose";
 
 export const TransactionHooks = {
-  async startTransaction(context: RequestContext) {
-    if (!context.transaction) {
-      context.transaction = await context.prisma.$transaction({
-        // We can customize transaction options here if needed
-        // maxWait: 5000, // default: 2000
-        // timeout: 10000, // default: 5000
-        isolationLevel: "ReadCommitted", // We can choose appropriate isolation level
-      });
+  async startTransaction(context: RequestContext): Promise<ClientSession> {
+    // If a session already exists, return it
+    if (context.session) {
+      return context.session;
     }
-    return context.transaction;
+
+    const session = await context.db.startSession();
+
+    await session.startTransaction(); // Begin the transaction
+
+    return session;
   },
 
-  async commitTransaction(context: RequestContext) {
-    if (context.transaction) {
-      await context.transaction.$commit();
-      context.transaction = undefined;
+  async commitTransaction(context: RequestContext): Promise<void> {
+    // If there's an active session, commit the transaction
+    if (context.session) {
+      try {
+        await context.session.commitTransaction();
+      } finally {
+        context.session.endSession(); // Always end the session
+      }
     }
   },
 
-  async rollbackTransaction(context: RequestContext) {
-    if (context.transaction) {
-      await context.transaction.$rollback();
-      context.transaction = undefined;
+  async rollbackTransaction(context: RequestContext): Promise<void> {
+    // If there's an active session, abort the transaction
+    if (context.session) {
+      try {
+        await context.session.abortTransaction();
+      } finally {
+        context.session.endSession(); // Always end the session
+      }
     }
   },
 };

@@ -5,7 +5,7 @@ import { logger } from "../utils/logger";
 import { ApiResponseService } from "../services/response.service";
 
 export const errorHandler = (
-  err: Error,
+  err: any,
   req: Request,
   res: Response,
   next: NextFunction

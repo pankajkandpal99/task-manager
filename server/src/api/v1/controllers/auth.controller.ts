@@ -1,90 +1,58 @@
+import { hash } from "bcryptjs";
+import { env } from "../../../config/env";
 import { RequestContext } from "../../../middleware/context";
+import jwt from "jsonwebtoken";
+import { handleResult, tryCatch } from "../../../utils/result.utils";
+import { Response } from "express";
+import { User } from "../../../models/user.model";
 
-const checkExistingUser = async (context: RequestContext, email: string) => {
-    // const existingUser = await context.db.
+class AuthError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number = 400
+  ) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+const generateToken = (userId: string) =>
+  jwt.sign({ userId }, env.JWT_SECRET, { expiresIn: "7d" });
+
+const hashPassword = (password: string) => hash(password, 12);
+
+export const AuthController = {
+  register: async (context: RequestContext, res: Response) => {
+    const result = await tryCatch(async () => {
+      return context.withTransaction(async (session) => {
+        console.log("enter : ", context);
+        const { email, password } = context.body;
+
+        const existing = await User.findOne({ email }).session(session);
+        if (existing) {
+          throw new AuthError("User already exists", 409);
+        }
+
+        const hashedPassword = await hashPassword(password);
+        const user = new User({
+          email,
+          password: hashedPassword,
+          role: "USER",
+          phoneNumber: "",
+        });
+
+        await user.save({ session });
+        const token = generateToken(user._id.toString());
+
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          role: user.role,
+          token,
+        };
+      });
+    });
+
+    return handleResult(res)(result);
+  },
 };
-
-export const registerUser = async (context: RequestContext) => {};
-
-
-// src/controllers/auth/register.controller.ts
-// import { RequestContext } from "../../middleware/context";
-// import { hash } from "bcryptjs";
-// import { sign } from "jsonwebtoken";
-// import { env } from "../../config/env";
-// import { Result, tryCatch, pipe, tap } from "../../utils/result.utils";
-// import { ConflictError } from "../../errors/appError";
-
-// Helper functions (pure functions for better testability)
-// const checkExistingUser = async (context: RequestContext, email: string) => {
-//   const existingUser = await context.db.user.findUnique({ where: { email } });
-//   if (existingUser) {
-//     throw new ConflictError("Email already registered");
-//   }
-// };
-
-// const hashUserPassword = async (password: string) => {
-//   return hash(password, 12);
-// };
-
-// const createUserRecord = async (
-//   context: RequestContext,
-//   email: string,
-//   hashedPassword: string
-// ) => {
-//   return context.db.user.create({
-//     data: {
-//       email,
-//       password: hashedPassword,
-//       role: "USER",
-//     },
-//   });
-// };
-
-// const generateAuthToken = (userId: string) => {
-//   return sign({ userId }, env.JWT_SECRET, { expiresIn: "7d" });
-// };
-
-// // Main controller function
-// export const registerUser = async (context: RequestContext) => {
-//   return tryCatch(async () => {
-//     const { email, password } = context.body;
-
-//     // Functional pipeline for registration flow
-//     return pipe(
-//       // Step 1: Validate email uniqueness
-//       async () => {
-//         await checkExistingUser(context, email);
-//         return { email, password };
-//       },
-      
-//       // Step 2: Hash password
-//       async ({ email, password }) => ({
-//         email,
-//         hashedPassword: await hashUserPassword(password),
-//       }),
-      
-//       // Step 3: Create user record
-//       async ({ email, hashedPassword }) => {
-//         const user = await createUserRecord(context, email, hashedPassword);
-//         return { user };
-//       },
-      
-//       // Step 4: Generate token
-//       async ({ user }) => {
-//         const token = generateAuthToken(user.id);
-//         return { user, token };
-//       },
-      
-//       // Step 5: Format response
-//       tap(({ user, token }) => ({
-//         user: {
-//           id: user.id,
-//           email: user.email,
-//           role: user.role,
-//         },
-//         token,
-//       }))
-//     )();
-//   });
-// };

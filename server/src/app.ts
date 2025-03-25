@@ -1,24 +1,19 @@
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
-import { loadEnv } from "./config/env";
 import { contextMiddleware } from "./middleware/context";
-import { AuditHooks } from "./hooks/audit";
 import { errorHandler } from "./middleware/error-handler";
-import { PrismaClient } from "@prisma/client";
-import { TransactionHooks } from "./hooks/transactions";
 import baseRouter from "./api/v1/routes";
 
-const prisma = new PrismaClient();
-
-export const createApp = () => {
+export const createApp = async () => {
   const app = express();
+  const db = await;
 
   // Middlewares
   app.use(helmet());
   app.use(cors());
   app.use(express.json());
-  app.use(contextMiddleware(prisma));
+  app.use(contextMiddleware(db));
 
   // Routes
   app.use("/api/v1", baseRouter);

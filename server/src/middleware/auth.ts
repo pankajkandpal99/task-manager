@@ -1,14 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { loadEnv } from "../config/env";
 import { ApiResponseService } from "../services/response.service";
+import { env } from "../config/env";
 
 export const requireAuth = (
-  req: Request,
+  req: Request & { context: { user: any } },
   res: Response,
   next: NextFunction
 ) => {
-  const env = loadEnv();
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {

@@ -1,7 +1,11 @@
 import { z } from "zod";
+import dotenv from "dotenv";
+dotenv.config();
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "production", "test"]),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
   PORT: z.string().default("8800"),
   JWT_SECRET: z.string(),
   DATABASE_URL: z.string(),
@@ -9,10 +13,22 @@ const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>;
 
-export const loadEnv = (): Env => {
+export const env: Env = (() => {
   try {
-    return envSchema.parse(process.env);
+    return envSchema.parse({
+      NODE_ENV: process.env.NODE_ENV,
+      PORT: process.env.PORT,
+      JWT_SECRET: process.env.JWT_SECRET,
+      DATABASE_URL: process.env.DATABASE_URL,
+    });
   } catch (error) {
-    throw new Error(`Invalid environment variables: ${error}`);
+    if (error instanceof z.ZodError) {
+      console.error("Environment Variable Validation Failed:");
+      error.errors.forEach((err) => {
+        console.error(`- ${err.path.join(".")}: ${err.message}`);
+      });
+      throw new Error(`Invalid environment variables. Check your .env file.`);
+    }
+    throw error;
   }
-};
+})();

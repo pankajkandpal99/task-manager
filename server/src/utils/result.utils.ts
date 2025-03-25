@@ -43,12 +43,14 @@ export const handleResult =
     }
   };
 
-export const pipe =
+export const pipeAsync =
   (...fns: Function[]) =>
-  (x: any) =>
-    fns.reduce((v, f) => f(v), x);
+  async (x: any) => {
+    return fns.reduce(async (v, f) => f(await v), Promise.resolve(x));
+  };
 
-export const tap = (fn: (x: any) => void) => (x: any) => {
-  fn(x);
-  return x;
-};
+export const tapAsync =
+  (fn: (x: any) => Promise<void> | void) => async (x: any) => {
+    await fn(x);
+    return x;
+  };
