@@ -1,7 +1,7 @@
 import { RequestContext } from "../../../middleware/context";
 
 const checkExistingUser = async (context: RequestContext, email: string) => {
-    const existingUser = await context.db.
+    // const existingUser = await context.db.
 };
 
 export const registerUser = async (context: RequestContext) => {};

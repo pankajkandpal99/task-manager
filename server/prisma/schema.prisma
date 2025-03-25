@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -14,10 +14,10 @@ enum Role {
 }
 
 model User {
-  id             String     @id @default(uuid())
+  id             String     @id @default(uuid()) @map("_id")
   email          String?    @unique
-  password       String?
-  phoneNumber    String?
+  password       String
+  phoneNumber    String     @unique
   role           Role       @default(USER)
   username       String?    @unique
   avatar         String?
@@ -40,7 +40,7 @@ model User {
 }
 
 model Session {
-  id          String   @id @default(uuid())
+  id          String   @id @default(uuid()) @map("_id")
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   token       String   @unique
@@ -55,7 +55,7 @@ model Session {
 }
 
 model UserStats {
-  id           String @id @default(uuid())
+  id           String @id @default(uuid()) @map("_id")
   userId       String @unique
   user         User   @relation(fields: [userId], references: [id])
   gamesPlayed  Int    @default(0)
