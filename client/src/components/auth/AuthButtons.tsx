@@ -11,8 +11,7 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChevronDown, LogOutIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store.ts";
-import { logout } from "../../features/auth/authSlice.ts";
+// import { logout } from "../../features/auth/authSlice.ts";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -22,18 +21,18 @@ interface AuthButtonsProps {
 
 const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
   const dispatch = useDispatch();
-  const { user, token } = useSelector((state: RootState) => state.auth);
+  // const { user, token } = useSelector((state: RootState) => state.auth);
 
   const defaultAvatar =
     "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
-  const handleLogout = () => {
-    dispatch(logout());
-  };
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  // };
 
   return (
     <div className="flex items-center gap-4">
-      {user && token ? (
+      {/* {user && token ? ( */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -41,8 +40,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
               className="h-auto p-0 hover:bg-transparent flex flex-row gap-x-1"
             >
               <Avatar>
-                <AvatarImage src={defaultAvatar} alt={user.username} />
-                <AvatarFallback>{user.username.charAt(0)}</AvatarFallback>
+                <AvatarImage src={defaultAvatar} alt="guest" />
+                {/* <AvatarFallback>{user.username.charAt(0)}</AvatarFallback> */}
               </Avatar>
               <ChevronDown
                 size={16}
@@ -55,22 +54,22 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
           <DropdownMenuContent className="w-48 mt-2" align="end">
             <DropdownMenuLabel className="flex flex-col">
               <span className="text-sm font-medium text-foreground">
-                {user.username}
+                {/* {user.username} */}
               </span>
               <span className="text-xs text-muted-foreground">
-                {user.email}
+                {/* {user.email} */}
               </span>
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+            {/* <DropdownMenuItem onClick={handleLogout} className="cursor-pointer"> */}
               <LogOutIcon size={16} strokeWidth={2} className="opacity-60" />
               <span>Sign Out</span>
-            </DropdownMenuItem>
+            {/* </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
-      ) : (
+      {/* ) : ( */}
         <Link to="/login">
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -83,7 +82,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
             </div>
           </motion.button>
         </Link>
-      )}
+      {/* )} */}
     </div>
   );
 };

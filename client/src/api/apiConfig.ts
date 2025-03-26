@@ -2,17 +2,17 @@ const API_BASE_URL = import.meta.env.VITE_MY_BACKEND_URL;
 
 const API_ENDPOINTS = {
   AUTH: {
-    REGISTER: `${API_BASE_URL}/auth/register`,
-    LOGIN: `${API_BASE_URL}/auth/login`,
-    LOGOUT: `${API_BASE_URL}/auth/logout`,
+    REGISTER: `${API_BASE_URL}/api/v1/auth/register`,
+    LOGIN: `${API_BASE_URL}/api/v1/auth/login`,
+    LOGOUT: `${API_BASE_URL}/api/v1/auth/logout`,
   },
   USERS: {
-    PROFILE: `${API_BASE_URL}/users/profile`,
-    UPDATE_PROFILE: `${API_BASE_URL}/users/update`,
+    PROFILE: `${API_BASE_URL}/api/v1/users/profile`,
+    UPDATE_PROFILE: `${API_BASE_URL}/api/v1/users/update`,
   },
   GAMES: {
-    LIST: `${API_BASE_URL}/games/list`,
-    DETAILS: (gameId: string) => `${API_BASE_URL}/games/${gameId}`,
+    LIST: `${API_BASE_URL}/api/v1/games/list`,
+    DETAILS: (gameId: string) => `${API_BASE_URL}/api/v1/games/${gameId}`,
   },
 };
 

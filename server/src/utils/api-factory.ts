@@ -40,7 +40,10 @@ export function createApiHandler(
           }
           next();
         } catch (error) {
-          HttpResponse.error(res, "Validation failed", 400, error as any);
+          HttpResponse.error(res, "Validation failed", 400, {
+            type: "ValidationError",
+            details: error,
+          });
         }
       }
     );
@@ -51,28 +54,61 @@ export function createApiHandler(
     let transactionStarted = false;
 
     try {
-      // Start transaction if needed
       if (options.useTransaction) {
         await TransactionHooks.startTransaction(context);
         transactionStarted = true;
       }
 
-      // Execute the handler with transaction-aware context
       const result = await handler(context);
 
-      // Commit transaction if we started one
+      if (!res.headersSent) {
+        if (result && typeof result === "object" && "success" in result) {
+          if (result.success) {
+            HttpResponse.send(res, result.data, result.code);
+          } else {
+            HttpResponse.error(res, result.error.message, result.code || 500, {
+              type: result.error.name,
+              details:
+                process.env.NODE_ENV === "production"
+                  ? undefined
+                  : { stack: result.error.stack },
+            });
+          }
+        } else if (result !== undefined) {
+          HttpResponse.send(res, result);
+        } else {
+          HttpResponse.send(res, { success: true });
+        }
+      }
+
       if (transactionStarted) {
         await TransactionHooks.commitTransaction(context);
       }
-
-      // Send successful response
-      HttpResponse.send(res, result);
     } catch (error) {
       if (transactionStarted) {
         await TransactionHooks.rollbackTransaction(context);
       }
 
-      HttpResponse.handleResult(res, error);
+      if (!res.headersSent) {
+        if (error instanceof Error) {
+          const statusCode = "statusCode" in error ? error.statusCode : 500;
+          HttpResponse.error(res, error.message, statusCode as number, {
+            type: error.name,
+            details:
+              process.env.NODE_ENV === "production"
+                ? undefined
+                : { stack: error.stack },
+          });
+        } else {
+          HttpResponse.error(res, "An unknown error occurred", 500, {
+            type: "UnknownError",
+            details:
+              process.env.NODE_ENV === "production"
+                ? undefined
+                : { message: String(error) },
+          });
+        }
+      }
     }
   });
 

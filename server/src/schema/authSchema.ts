@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+const phoneRegex = /^\+[1-9]\d{1,14}$/;
+
 export const registerSchema = z
   .object({
     username: z
@@ -19,17 +21,60 @@ export const registerSchema = z
         "Password must contain at least one special character"
       ),
     confirmPassword: z.string(),
-    phoneNumber: z.number(),
+    // phoneNumber: z
+    //   .string()
+    //   .min(10, "Phone number too short")
+    //   .max(15, "Phone number too long")
+    //   .regex(phoneRegex, {
+    //     message:
+    //       "Invalid phone format. Use E.164 format: +[country code][number] (e.g. +919876543210)",
+    //   }),
+    phoneNumber: z
+      .string()
+      .min(10, "Phone number must be exactly 10 digits")
+      .max(10, "Phone number must be exactly 10 digits")
+      .regex(/^[0-9]+$/, "Phone number must contain only numbers"),
   })
+  .strict()
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
-export const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
+export const loginSchema = z
+  .object({
+    email: z.string().email("Invalid email address").optional(),
+    // phoneNumber: z
+    //   .string()
+    //   .min(10, "Phone number too short")
+    //   .max(15, "Phone number too long")
+    //   .regex(phoneRegex, {
+    //     message:
+    //       "Invalid phone format. Use E.164 format: +[country code][number] (e.g. +919876543210)",
+    //   })
+    //   .optional(),
+    phoneNumber: z
+      .string()
+      .min(10, "Phone number must be exactly 10 digits")
+      .max(10, "Phone number must be exactly 10 digits")
+      .regex(/^[0-9]+$/, "Phone number must contain only numbers")
+      .optional(),
 
-export type RegisterValues = z.infer<typeof registerSchema>;
-export type LoginValues = z.infer<typeof loginSchema>;
+    password: z.string().min(8, "Password must be at least 8 characters"),
+  })
+  .strict()
+  .refine(
+    (data) => {
+      const loginMethodsProvided = [
+        data.email ? 1 : 0,
+        data.phoneNumber ? 1 : 0,
+      ].reduce((a, b) => a + b, 0);
+
+      return loginMethodsProvided === 1;
+    },
+    {
+      message:
+        "Exactly one login method (email or phone number) must be provided",
+      path: ["phoneNumber"],
+    }
+  );

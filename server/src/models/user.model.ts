@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-import bcrypt from "bcryptjs";
 import { IUser } from "../types/model/i-user-model";
 import { AuthProvider, Role } from "../types/model/i-model";
 
@@ -19,10 +18,12 @@ const UserSchema = new Schema<IUser>(
     },
     phoneNumber: {
       type: String,
-      required: true,
+      required: [true, "Phone number is required"],
+      unique: true,
       validate: {
         validator: (v: string) => /^\+?[1-9]\d{1,14}$/.test(v),
-        message: "Invalid phone number format",
+        message:
+          "Invalid phone number format (use E.164 format: +[country code][number])",
       },
     },
     role: {
@@ -63,5 +64,7 @@ const UserSchema = new Schema<IUser>(
     },
   }
 );
+
+// UserSchema.index({ phoneNumber: 1 }, { unique: true });
 
 export const User = model<IUser>("User", UserSchema);

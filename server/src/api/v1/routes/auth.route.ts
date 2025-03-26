@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerSchema } from "../../../schema/authSchema";
+import { loginSchema, registerSchema } from "../../../schema/authSchema";
 import { createApiHandler } from "../../../utils/api-factory";
 import { AuthController } from "../controllers/auth.controller";
 
@@ -13,10 +13,12 @@ export default (router: Router) => {
     })
   );
 
-  // router.get(
-  //   "/users/profile",
-  //   createApiHandler(getUserProfile, {
-  //     requireAuth: true,
-  //   })
-  // );
+  router.post(
+    "/auth/login",
+    createApiHandler(AuthController.login, {
+      bodySchema: loginSchema,
+      useTransaction: true,
+      requireAuth: false,
+    })
+  );
 };

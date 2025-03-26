@@ -41,12 +41,13 @@ export const handleResult =
       return HttpResponse.send(res, result.data, result.code);
     } else {
       console.log("Sending error response...");
-      return HttpResponse.error(
-        res,
-        result.error.message,
-        result.code || 500,
-        process.env.NODE_ENV === "production" ? undefined : [result.error.stack]
-      );
+      return HttpResponse.error(res, result.error.message, result.code || 500, {
+        type: result.error.name,
+        details:
+          process.env.NODE_ENV === "production"
+            ? undefined
+            : { stack: result.error.stack },
+      });
     }
   };
 

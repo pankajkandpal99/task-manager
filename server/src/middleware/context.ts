@@ -28,7 +28,6 @@ export class RequestContext {
   async withTransaction<T>(
     callback: (session: ClientSession) => Promise<T>
   ): Promise<T> {
-    // If already in a transaction, just run the callback
     if (this._session) {
       return callback(this._session);
     }
@@ -41,14 +40,15 @@ export class RequestContext {
       await session.withTransaction(async () => {
         result = await callback(session);
       });
-
       return result!;
     } catch (error) {
-      await session.abortTransaction(); // session is ended on error
+      if (session.transaction.isActive) {
+        await session.abortTransaction();
+      }
       throw error;
     } finally {
       this._session = undefined;
-      session.endSession();
+      await session.endSession();
     }
   }
 
