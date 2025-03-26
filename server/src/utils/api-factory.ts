@@ -6,8 +6,6 @@ import { requireAuth } from "../middleware/auth";
 import { HttpResponse } from "../utils/service-response";
 import { TransactionHooks } from "../hooks/transactions";
 
-// type ExtendedRequest = Request & { context: RequestContext };
-
 type ApiHandlerOptions = {
   bodySchema?: ZodSchema;
   querySchema?: ZodSchema;
@@ -17,7 +15,7 @@ type ApiHandlerOptions = {
 };
 
 export function createApiHandler(
-  handler: (context: RequestContext, res: Response) => Promise<any>,
+  handler: (context: RequestContext) => Promise<any>,
   options: ApiHandlerOptions = {}
 ): RequestHandler[] {
   const middlewares: RequestHandler[] = [];
@@ -60,7 +58,7 @@ export function createApiHandler(
       }
 
       // Execute the handler with transaction-aware context
-      const result = await handler(context, res);
+      const result = await handler(context);
 
       // Commit transaction if we started one
       if (transactionStarted) {

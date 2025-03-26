@@ -6,7 +6,6 @@ const UserStatsSchema = new Schema<IUserStats>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      unique: true,
       required: true,
     },
     gamesPlayed: {
@@ -38,8 +37,5 @@ const UserStatsSchema = new Schema<IUserStats>(
     },
   }
 );
-
-UserStatsSchema.index({ userId: 1 });
-UserStatsSchema.index({ "highScores.gameId": 1 });
 
 export const UserStats = model<IUserStats>("UserStats", UserStatsSchema);

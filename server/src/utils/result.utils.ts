@@ -31,9 +31,16 @@ export const tryCatch = async <T>(
 export const handleResult =
   (res: Response) =>
   async <T>(result: Result<T>) => {
+    if (res.headersSent) {
+      console.log("⚠️ Response already sent, skipping duplicate response");
+      return;
+    }
+
     if (result.success) {
+      console.log("Sending success response...");
       return HttpResponse.send(res, result.data, result.code);
     } else {
+      console.log("Sending error response...");
       return HttpResponse.error(
         res,
         result.error.message,

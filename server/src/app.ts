@@ -4,10 +4,12 @@ import cors from "cors";
 import { contextMiddleware } from "./middleware/context";
 import { errorHandler } from "./middleware/error-handler";
 import baseRouter from "./api/v1/routes";
+import { databaseConnection } from "./lib/db";
 
 export const createApp = async () => {
   const app = express();
-  const db = await;
+  // await databaseConnection.connect();
+  const db = databaseConnection.getConnection();
 
   // Middlewares
   app.use(helmet());

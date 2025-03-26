@@ -1,12 +1,12 @@
 import { createApp } from "./app";
 import { env } from "./config/env";
-import { mongooseConnection } from "./lib/db";
+import { databaseConnection } from "./lib/db";
 import { logger } from "./utils/logger";
 
 const startServer = async () => {
   try {
-    const app = createApp();
-    await mongooseConnection.connect();
+    const app = await createApp();
+    await databaseConnection.connect();
 
     const server = app.listen(env.PORT, () => {
       logger.info(`Server running in ${env.NODE_ENV} mode on port ${env.PORT}`);
@@ -15,7 +15,7 @@ const startServer = async () => {
     process.on("SIGTERM", () => {
       logger.info("SIGTERM received: closing server");
       server.close(async () => {
-        await mongooseConnection.disconnect;
+        await databaseConnection.disconnect();
         logger.info("Server closed");
         process.exit(0);
       });

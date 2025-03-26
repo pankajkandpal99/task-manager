@@ -7,8 +7,6 @@ const UserSchema = new Schema<IUser>(
   {
     email: {
       type: String,
-      unique: true,
-      sparse: true,
       validate: {
         validator: (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
         message: "Invalid email format",
@@ -21,7 +19,6 @@ const UserSchema = new Schema<IUser>(
     },
     phoneNumber: {
       type: String,
-      unique: true,
       required: true,
       validate: {
         validator: (v: string) => /^\+?[1-9]\d{1,14}$/.test(v),
@@ -35,8 +32,6 @@ const UserSchema = new Schema<IUser>(
     },
     username: {
       type: String,
-      unique: true,
-      sparse: true,
       minlength: [3, "Username must be at least 3 characters"],
     },
     avatar: String,
@@ -53,7 +48,7 @@ const UserSchema = new Schema<IUser>(
     sessions: [{ type: Schema.Types.ObjectId, ref: "Session" }],
     stats: { type: Schema.Types.ObjectId, ref: "UserStats" },
     isGuest: { type: Boolean, default: false },
-    guestId: { type: String, unique: true, sparse: true },
+    guestId: { type: String },
     guestExpiresAt: Date,
   },
   {
@@ -67,16 +62,6 @@ const UserSchema = new Schema<IUser>(
       },
     },
   }
-);
-
-UserSchema.index(
-  { email: 1 },
-  { unique: true, partialFilterExpression: { email: { $exists: true } } }
-);
-UserSchema.index({ phoneNumber: 1 }, { unique: true });
-UserSchema.index(
-  { username: 1 },
-  { unique: true, partialFilterExpression: { username: { $exists: true } } }
 );
 
 export const User = model<IUser>("User", UserSchema);

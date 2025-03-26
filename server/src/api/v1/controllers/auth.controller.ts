@@ -22,11 +22,10 @@ const generateToken = (userId: string) =>
 const hashPassword = (password: string) => hash(password, 12);
 
 export const AuthController = {
-  register: async (context: RequestContext, res: Response) => {
+  register: async (context: RequestContext) => {
     const result = await tryCatch(async () => {
       return context.withTransaction(async (session) => {
-        console.log("enter : ", context);
-        const { email, password } = context.body;
+        const { email, password, phoneNumber } = context.body;
 
         const existing = await User.findOne({ email }).session(session);
         if (existing) {
@@ -38,7 +37,7 @@ export const AuthController = {
           email,
           password: hashedPassword,
           role: "USER",
-          phoneNumber: "",
+          phoneNumber: phoneNumber,
         });
 
         await user.save({ session });
@@ -53,6 +52,6 @@ export const AuthController = {
       });
     });
 
-    return handleResult(res)(result);
+    // return handleResult(res)(result);
   },
 };

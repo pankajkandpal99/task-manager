@@ -11,13 +11,11 @@ const SessionSchema = new Schema<ISession>(
     },
     token: {
       type: String,
-      unique: true,
       required: true,
     },
     expiresAt: {
       type: Date,
       required: true,
-      index: { expires: "7d" },
     },
     ipAddress: String,
     userAgent: String,
@@ -42,9 +40,5 @@ const SessionSchema = new Schema<ISession>(
     },
   }
 );
-
-// Indexes
-SessionSchema.index({ userId: 1 });
-SessionSchema.index({ token: 1 });
 
 export const Session = model<ISession>("Session", SessionSchema);
