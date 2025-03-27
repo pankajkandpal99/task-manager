@@ -12,6 +12,8 @@ export const createApp = async () => {
   const app = express();
   const db = databaseConnection.getConnection();
 
+  console.log("enter app.ts");
+
   // Middlewares
   app.use(helmet());
   app.use(cors(corsOptions));

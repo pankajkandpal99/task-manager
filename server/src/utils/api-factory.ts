@@ -51,6 +51,7 @@ export function createApiHandler(
 
   middlewares.push(async (req: Request, res: Response) => {
     const context = (req as unknown as { context: RequestContext }).context;
+    console.log("context: ");
     let transactionStarted = false;
 
     try {

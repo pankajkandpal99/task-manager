@@ -12,6 +12,7 @@ const loadRoutes = async () => {
   );
 
   for (const file of files) {
+    console.log("enter route file");
     const routePath = join(routesPath, file);
     const route = await import(routePath);
     if (typeof route.default === "function") {

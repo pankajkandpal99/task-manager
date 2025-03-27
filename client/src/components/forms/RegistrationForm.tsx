@@ -44,7 +44,8 @@ const RegisterForm: React.FC = () => {
     },
   });
 
-  const onSubmit = async (data: RegisterFormValues) => {
+  const onSubmit = (data: RegisterFormValues) => {
+    console.log("Submitting Form Data:", data);
     dispatch(registerUser(data));
   };
 

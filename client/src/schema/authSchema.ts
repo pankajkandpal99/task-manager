@@ -8,7 +8,7 @@ export const registerFormSchema = z
       .max(20, "Username cannot be more than 20 characters")
       .optional(),
     email: z.string().email("Invalid email address").optional(),
-    countryCode: z.string().min(1, "Country code is required"),
+    // countryCode: z.string().min(1, "Country code is required"),
     phoneNumber: z
       .string()
       .min(10, "Phone number must be exactly 10 digits")
@@ -31,7 +31,7 @@ export const registerFormSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   })
-  .refine((data) => data.email || (data.countryCode && data.phoneNumber), {
+  .refine((data) => data.email || data.phoneNumber, {
     message: "Either email or phone number must be provided",
     path: ["phoneNumber"],
   });

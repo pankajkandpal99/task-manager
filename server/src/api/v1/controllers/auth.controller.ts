@@ -15,6 +15,8 @@ export const AuthController = {
   register: async (context: RequestContext) => {
     try {
       const result = await context.withTransaction(async (session) => {
+        console.log("Registering user");
+        console.log(context.body);
         const { email, password, phoneNumber } = context.body;
 
         const existingUser = await User.findOne({ phoneNumber }).session(
