@@ -10,13 +10,12 @@ export const TransactionHooks = {
 
     const session = await context.db.startSession();
 
-    await session.startTransaction(); // Begin the transaction
+    await session.startTransaction();
 
     return session;
   },
 
   async commitTransaction(context: RequestContext): Promise<void> {
-    // If there's an active session, commit the transaction
     if (context.session) {
       try {
         await context.session.commitTransaction();
@@ -27,7 +26,6 @@ export const TransactionHooks = {
   },
 
   async rollbackTransaction(context: RequestContext): Promise<void> {
-    // If there's an active session, abort the transaction
     if (context.session) {
       try {
         await context.session.abortTransaction();

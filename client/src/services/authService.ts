@@ -1,6 +1,15 @@
 import axios from "axios";
-import { RegisterFormValues } from "../schema/authSchema";
-import { API_ENDPOINTS } from "../api/apiConfig";
+import { LoginFormValues, RegisterFormValues } from "../schema/authSchema";
+import { API_BASE_URL, API_ENDPOINTS } from "../api/apiConfig";
+
+const apiClient = axios.create({
+  baseURL: `${API_BASE_URL}/api/v1`,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+});
 
 export const AuthService = {
   async register(data: RegisterFormValues) {
@@ -9,18 +18,45 @@ export const AuthService = {
         username: data.username,
         email: data.email,
         password: data.password,
-        phone: data.phoneNumber,
+        confirmPassword: data.password,
+        phoneNumber: data.phoneNumber,
       };
 
-      const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, payload);
+      const response = await apiClient.post(
+        API_ENDPOINTS.AUTH.REGISTER,
+        payload
+      );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || "Registration failed");
+      if (axios.isAxiosError(error) && error.response) {
+        const serverError = error.response.data;
+        // console.log("Server Error Response:", serverError);
+
+        throw new Error(serverError.error || "Registration failed");
       }
-      throw new Error("An unexpected error occurred");
+
+      throw new Error("Network error occurred. Please try again.");
     }
   },
 
-  //   async login(data: LoginFormValues) {},
+  async login(data: LoginFormValues) {
+    try {
+      const payload = {
+        phoneNumber: data.phoneNumber,
+        password: data.password,
+      };
+
+      const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, payload);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const serverError = error.response.data;
+        // console.log("Server Error Response:", serverError);
+
+        throw new Error(serverError.error || "Registration failed");
+      }
+
+      throw new Error("Network error occurred. Please try again.");
+    }
+  },
 };

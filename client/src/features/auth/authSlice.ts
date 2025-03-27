@@ -1,25 +1,48 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AuthService } from "../../services/authService";
-import { RegisterFormValues } from "../../schema/authSchema";
+import { LoginFormValues, RegisterFormValues } from "../../schema/authSchema";
+import { verifyTokenClientSide } from "../../utils/authUtils";
 
 interface AuthState {
   loading: boolean;
   error: string | null;
   registered: boolean;
+  authenticated: boolean;
+  initialized: boolean;
 }
 
 const initialState: AuthState = {
   loading: false,
   error: null,
   registered: false,
+  authenticated: false,
+  initialized: false, // Will be true after first auth check
 };
+
+export const verifyAuth = createAsyncThunk("auth/verify", async () => {
+  return { authenticated: verifyTokenClientSide() };
+});
 
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (userData: RegisterFormValues, { rejectWithValue }) => {
     try {
-      console.log("store : ", userData);
       const response = await AuthService.register(userData);
+      return response;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Registration failed");
+    }
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (loginData: LoginFormValues, { rejectWithValue }) => {
+    try {
+      const response = await AuthService.login(loginData);
       return response;
     } catch (error) {
       if (error instanceof Error) {
@@ -36,6 +59,10 @@ const authSlice = createSlice({
   reducers: {
     resetRegistration: (state) => {
       state.registered = false;
+      state.error = null;
+    },
+    clearError: (state) => {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -43,17 +70,46 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.registered = false;
       })
       .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
         state.registered = true;
+        state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+        state.registered = false;
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state) => {
+        state.loading = false;
+        state.authenticated = true;
+        state.error = null;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(verifyAuth.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(verifyAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        state.authenticated = action.payload.authenticated;
+        state.initialized = true;
+      })
+      .addCase(verifyAuth.rejected, (state) => {
+        state.loading = false;
+        state.authenticated = false;
+        state.initialized = true;
       });
   },
 });
 
-export const { resetRegistration } = authSlice.actions;
+export const { resetRegistration, clearError } = authSlice.actions;
 export default authSlice.reducer;

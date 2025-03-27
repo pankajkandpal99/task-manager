@@ -3,13 +3,15 @@ import { Outlet } from "react-router-dom";
 import { Navbar } from "../components/navbar/Navbar";
 import { NAVBAR_ITEMS } from "../config/constants";
 
-export const MainLayout: React.FC = () => {
+interface MainLayoutProps {
+  children?: React.ReactNode;
+}
+
+export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar items={NAVBAR_ITEMS} />
-      <main className="flex-1 container mx-auto">
-        <Outlet />
-      </main>
+      <main className="flex-1 container mx-auto">{children || <Outlet />}</main>
     </div>
   );
 };

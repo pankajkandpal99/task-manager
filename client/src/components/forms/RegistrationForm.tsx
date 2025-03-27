@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -27,26 +27,29 @@ import {
 } from "../../schema/authSchema";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { registerUser, resetRegistration } from "../../features/auth/authSlice";
+import { Eye, EyeOff } from "lucide-react";
 
 const RegisterForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { loading, error, registered } = useAppSelector((state) => state.auth);
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
-      username: "",
+      username: undefined,
       phoneNumber: "",
-      email: "",
+      email: undefined,
       password: "",
       confirmPassword: "",
     },
   });
 
-  const onSubmit = (data: RegisterFormValues) => {
-    console.log("Submitting Form Data:", data);
-    dispatch(registerUser(data));
+  const onSubmit = async (data: RegisterFormValues) => {
+    await dispatch(registerUser(data));
   };
 
   useEffect(() => {
@@ -58,9 +61,20 @@ const RegisterForm: React.FC = () => {
         },
         replace: true,
       });
+
+      form.reset();
       dispatch(resetRegistration());
     }
   }, [registered, navigate, form, dispatch]);
+
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      if (error) {
+        dispatch(resetRegistration());
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, error, dispatch]);
 
   return (
     <div className="flex items-center justify-center p-4 sm:px-6 md:px-8">
@@ -85,7 +99,7 @@ const RegisterForm: React.FC = () => {
               <FormField
                 control={form.control}
                 name="username"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium">
                       Username
@@ -94,65 +108,51 @@ const RegisterForm: React.FC = () => {
                       <Input
                         placeholder="Enter your username"
                         {...field}
-                        className="text-sm"
+                        className={`text-sm pr-10 ${
+                          fieldState.error
+                            ? "border-red-400 focus-visible:ring-red-400"
+                            : ""
+                        }`}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
 
-              {/* <div className="flex flex-col space-y-2">
-                <FormLabel className="text-sm font-medium">
-                  Phone Number
-                </FormLabel>
-                <div className="flex items-center space-x-2">
-                  <FormField
-                    control={form.control}
-                    name="countryCode"
-                    render={({ field }) => (
-                      <FormItem className="w-[50px]">
-                        <FormControl>
-                          <CountryCodeSelect field={field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="phoneNumber"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <Input
-                            placeholder="Enter phone number"
-                            {...field}
-                            className="text-sm"
-                            onChange={(e) => {
-                              const value = e.target.value.replace(/\D/g, "");
-                              form.setValue("phoneNumber", value.slice(0, 10));
-                            }}
-                            value={field.value}
-                            type="tel"
-                            maxLength={10}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="text-xs text-muted-foreground pl-1">
-                  Enter 10-digit phone number without country code
-                </div>
-              </div> */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <div className="flex justify-between gap-1">
+                      <FormLabel className="text-sm font-medium">
+                        Email
+                      </FormLabel>
+                      <span className="text-xs text-muted-foreground">
+                        (optional)
+                      </span>
+                    </div>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your email"
+                        {...field}
+                        className={`text-sm pr-10 ${
+                          fieldState.error
+                            ? "border-red-400 focus-visible:ring-red-400"
+                            : ""
+                        }`}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
                 name="phoneNumber"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem className="flex-1">
                     <FormLabel className="text-sm font-medium">
                       Phone Number
@@ -161,7 +161,11 @@ const RegisterForm: React.FC = () => {
                       <Input
                         placeholder="Enter phone number"
                         {...field}
-                        className="text-sm"
+                        className={`text-sm pr-10 ${
+                          fieldState.error
+                            ? "border-red-400 focus-visible:ring-red-400"
+                            : ""
+                        }`}
                         onChange={(e) => {
                           const value = e.target.value.replace(/\D/g, "");
                           form.setValue("phoneNumber", value.slice(0, 10));
@@ -171,25 +175,7 @@ const RegisterForm: React.FC = () => {
                         maxLength={10}
                       />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your email"
-                        {...field}
-                        className="text-sm"
-                      />
-                    </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -197,20 +183,39 @@ const RegisterForm: React.FC = () => {
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium">
                       Password
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Enter your password"
-                        className="text-sm"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your password"
+                          className={`text-sm pr-10 ${
+                            fieldState.error
+                              ? "border-red-400 focus-visible:ring-red-400"
+                              : ""
+                          }`}
+                          {...field}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:bg-transparent hover:text-muted-foreground cursor-pointer"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -218,20 +223,41 @@ const RegisterForm: React.FC = () => {
               <FormField
                 control={form.control}
                 name="confirmPassword"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium">
                       Confirm Password
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Confirm your password"
-                        className="text-sm"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Confirm your password"
+                          className={`text-sm pr-10 ${
+                            fieldState.error
+                              ? "border-red-400 focus-visible:ring-red-400"
+                              : ""
+                          }`}
+                          {...field}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:bg-transparent hover:text-muted-foreground cursor-pointer"
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />

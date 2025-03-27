@@ -15,8 +15,6 @@ export const AuthController = {
   register: async (context: RequestContext) => {
     try {
       const result = await context.withTransaction(async (session) => {
-        console.log("Registering user");
-        console.log(context.body);
         const { email, password, phoneNumber } = context.body;
 
         const existingUser = await User.findOne({ phoneNumber }).session(
@@ -95,10 +93,12 @@ export const AuthController = {
         const token = generateToken(user._id.toString());
         context.res.cookie("token", token, {
           httpOnly: true,
-          secure: env.NODE_ENV === "production",
-          sameSite: env.NODE_ENV === "production" ? "strict" : "lax",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          domain: env.NODE_ENV === "production" ? env.COOKIE_DOMAIN : undefined,
+          secure: env.NODE_ENV === "production" ? true : false,
+          sameSite: env.NODE_ENV === "production" ? "none" : "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+          domain:
+            env.NODE_ENV === "production" ? env.COOKIE_DOMAIN : "localhost",
+          path: "/",
         });
 
         return {
@@ -106,7 +106,6 @@ export const AuthController = {
           phoneNumber: user.phoneNumber,
           role: user.role,
           ...(user.email && { email: user.email }),
-          // token,
         };
       });
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const phoneRegex = /^\+[1-9]\d{1,14}$/;
+// const phoneRegex = /^\+[1-9]\d{1,14}$/;
 
 export const registerSchema = z
   .object({
@@ -21,14 +21,6 @@ export const registerSchema = z
         "Password must contain at least one special character"
       ),
     confirmPassword: z.string(),
-    // phoneNumber: z
-    //   .string()
-    //   .min(10, "Phone number too short")
-    //   .max(15, "Phone number too long")
-    //   .regex(phoneRegex, {
-    //     message:
-    //       "Invalid phone format. Use E.164 format: +[country code][number] (e.g. +919876543210)",
-    //   }),
     phoneNumber: z
       .string()
       .min(10, "Phone number must be exactly 10 digits")
@@ -44,15 +36,6 @@ export const registerSchema = z
 export const loginSchema = z
   .object({
     email: z.string().email("Invalid email address").optional(),
-    // phoneNumber: z
-    //   .string()
-    //   .min(10, "Phone number too short")
-    //   .max(15, "Phone number too long")
-    //   .regex(phoneRegex, {
-    //     message:
-    //       "Invalid phone format. Use E.164 format: +[country code][number] (e.g. +919876543210)",
-    //   })
-    //   .optional(),
     phoneNumber: z
       .string()
       .min(10, "Phone number must be exactly 10 digits")

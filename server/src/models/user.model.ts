@@ -18,12 +18,11 @@ const UserSchema = new Schema<IUser>(
     },
     phoneNumber: {
       type: String,
-      required: [true, "Phone number is required"],
+      required: true,
       unique: true,
       validate: {
-        validator: (v: string) => /^\+?[1-9]\d{1,14}$/.test(v),
-        message:
-          "Invalid phone number format (use E.164 format: +[country code][number])",
+        validator: (v: string) => /^[0-9]{10}$/.test(v),
+        message: "Phone number must be 10 digits",
       },
     },
     role: {

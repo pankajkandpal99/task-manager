@@ -12,13 +12,11 @@ export const createApp = async () => {
   const app = express();
   const db = databaseConnection.getConnection();
 
-  console.log("enter app.ts");
-
   // Middlewares
-  app.use(helmet());
+  app.use(express.json());
   app.use(cors(corsOptions));
   app.use(cookieParser());
-  app.use(express.json());
+  app.use(helmet());
   app.use(contextMiddleware(db));
 
   // Routes

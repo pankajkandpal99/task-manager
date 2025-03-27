@@ -22,7 +22,7 @@ export const publicRoutes: RouteConfig[] = [
   { path: "/", element: Home },
   { path: "/about", element: About },
   { path: "/games", element: Games },
-  { path: "/leaderboard", element: Leaderboard },
+
   { path: "/contest", element: Contest },
   { path: "/support", element: Support },
   { path: "/services", element: Services },
@@ -34,6 +34,8 @@ export const authRoutes: RouteConfig[] = [
   { path: "/register", element: Register },
 ];
 
-export const protectedRoutes: RouteConfig[] = [];
+export const protectedRoutes: RouteConfig[] = [
+  { path: "/leaderboard", element: Leaderboard },
+];
 
 export const notFoundRoute: RouteConfig = { path: "*", element: NotFound };

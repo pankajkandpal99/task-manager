@@ -28,7 +28,6 @@ export class RequestContext {
   async withTransaction<T>(
     callback: (session: ClientSession) => Promise<T>
   ): Promise<T> {
-    console.log("enter withTransaction");
     if (this._session) {
       return callback(this._session);
     }
