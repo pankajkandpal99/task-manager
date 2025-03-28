@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { NavbarItemType } from "../../types/navbar-types/navbarTypes";
+import { NavbarItemType } from "../../types/navbarTypes";
 import { cn } from "../../lib/utils";
 import { motion } from "framer-motion";
 

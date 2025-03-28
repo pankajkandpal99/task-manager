@@ -1,6 +1,6 @@
 import React from "react";
 import { NavbarItem } from "./NavbarItem";
-import { NavbarItemType } from "../../types/navbar-types/navbarTypes";
+import { NavbarItemType } from "../../types/navbarTypes";
 import AuthButtons from "../auth/AuthButtons";
 import { motion } from "framer-motion";
 import { X, User, Menu } from "lucide-react";

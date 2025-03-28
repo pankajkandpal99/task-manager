@@ -17,8 +17,6 @@ export const ProtectedRoute = () => {
   }
 
   if (!authenticated) {
-    console.log("not authenticated : ");
-    
     return (
       <MainLayout>
         <div className="flex flex-col items-center justify-center h-[80vh] gap-4">

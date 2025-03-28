@@ -1,4 +1,4 @@
-import { NavbarItemType } from "../types/navbar-types/navbarTypes";
+import { NavbarItemType } from "../types/navbarTypes";
 
 export const NAVBAR_ITEMS: NavbarItemType[] = [
   { id: "1", label: "Home", href: "/" },

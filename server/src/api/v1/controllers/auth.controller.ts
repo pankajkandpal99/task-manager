@@ -92,7 +92,7 @@ export const AuthController = {
 
         const token = generateToken(user._id.toString());
         context.res.cookie("token", token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: env.NODE_ENV === "production" ? true : false,
           sameSite: env.NODE_ENV === "production" ? "none" : "lax",
           maxAge: 7 * 24 * 60 * 60 * 1000,

@@ -2,7 +2,7 @@ import React from "react";
 import { NavbarItem } from "./NavbarItem";
 import { Link } from "react-router-dom";
 // import { CompanyLogo } from "../logo/CompanyLogo";
-import { NavbarItemType } from "../../types/navbar-types/navbarTypes";
+import { NavbarItemType } from "../../types/navbarTypes";
 import AuthButtons from "../auth/AuthButtons";
 import MobileMenu from "./MobileMenu";
 import { motion } from "framer-motion";
