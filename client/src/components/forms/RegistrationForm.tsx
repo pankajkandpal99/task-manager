@@ -26,7 +26,7 @@ import {
   RegisterFormValues,
 } from "../../schema/authSchema";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { registerUser, resetRegistration } from "../../features/auth/authSlice";
+import { registerUser, resetRegistration } from "../../features/auth/auth.slice";
 import { Eye, EyeOff } from "lucide-react";
 
 const RegisterForm: React.FC = () => {

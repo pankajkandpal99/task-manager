@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { AuthService } from "../../services/authService";
+import { AuthService } from "../../services/auth.service";
 import { LoginFormValues, RegisterFormValues } from "../../schema/authSchema";
 import { verifyTokenClientSide } from "../../utils/authUtils";
+import { setUser } from "../user/user.slice";
 
 interface AuthState {
   loading: boolean;
@@ -19,9 +20,12 @@ const initialState: AuthState = {
   initialized: false, // Will be true after first auth check
 };
 
-export const verifyAuth = createAsyncThunk("auth/verify", async () => {
-  return { authenticated: verifyTokenClientSide() };
-});
+export const verifyAuth = createAsyncThunk<{ authenticated: boolean }>(
+  "auth/verify",
+  async () => {
+    return { authenticated: verifyTokenClientSide() };
+  }
+);
 
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -40,9 +44,10 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (loginData: LoginFormValues, { rejectWithValue }) => {
+  async (loginData: LoginFormValues, { rejectWithValue, dispatch }) => {
     try {
       const response = await AuthService.login(loginData);
+      dispatch(setUser(response.data.user));
       return response;
     } catch (error) {
       if (error instanceof Error) {

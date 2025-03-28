@@ -54,3 +54,9 @@ export interface UserData {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface UserState {
+  currentUser: UserData | null;
+  loading: boolean;
+  error: string | null;
+}

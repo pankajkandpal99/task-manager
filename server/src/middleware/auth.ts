@@ -15,16 +15,34 @@ export const requireAuth = (
   }
 
   const token = authHeader.split(" ")[1];
+  console.log("token in server : ", token);
 
-  jwt.verify(token, env.JWT_SECRET, (err: any, decoded: any) => {
-    if (err) return ApiResponseService.error(res, "Invalid token", 403);
+  try {
+    const decoded = jwt.verify(token, env.JWT_SECRET) as {
+      userId: string;
+      email?: string;
+      role?: string;
+    };
 
+    console.log("token inside decoded : ", decoded);
+
+    // Add user to request context
     req.context.user = {
-      id: decoded.sub,
-      email: decoded.email,
-      role: decoded.role,
+      id: decoded.userId,
+      email: decoded.email || "",
+      role: decoded.role || "user",
     };
 
     next();
-  });
+  } catch (err) {
+    console.log("error inside token catch ");
+
+    if (err instanceof jwt.TokenExpiredError) {
+      return ApiResponseService.error(res, "Token expired", 401);
+    }
+    if (err instanceof jwt.JsonWebTokenError) {
+      return ApiResponseService.error(res, "Invalid token", 403);
+    }
+    return ApiResponseService.error(res, "Authentication failed", 500);
+  }
 };

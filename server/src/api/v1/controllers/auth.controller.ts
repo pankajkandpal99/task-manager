@@ -92,7 +92,7 @@ export const AuthController = {
 
         const token = generateToken(user._id.toString());
         context.res.cookie("token", token, {
-          httpOnly: false,
+          httpOnly: false, // true only when server side token checking
           secure: env.NODE_ENV === "production" ? true : false,
           sameSite: env.NODE_ENV === "production" ? "none" : "lax",
           maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -101,11 +101,13 @@ export const AuthController = {
           path: "/",
         });
 
+        const userObject = user.toObject();
+
+        delete (userObject as { password?: string }).password;
+        delete (userObject as { __v?: any }).__v;
+
         return {
-          id: user._id.toString(),
-          phoneNumber: user.phoneNumber,
-          role: user.role,
-          ...(user.email && { email: user.email }),
+          user: userObject,
         };
       });
 

@@ -5,8 +5,7 @@ export const checkAuthCookie = (): boolean => {
 };
 
 export const getTokenFromCookie = (): string | null => {
-  // More reliable cookie parsing
-  const cookieString = document.cookie;
+  const cookieString = document.cookie; // More reliable cookie parsing
   const cookieArray = cookieString.split("; ");
   const tokenCookie = cookieArray.find((row) => row.startsWith("token="));
 
@@ -27,4 +26,11 @@ export const verifyTokenClientSide = (): boolean => {
 
 export const clearAuthCookie = (): void => {
   document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+};
+
+export const logoutClient = (): void => {
+  clearAuthCookie();
+  localStorage.clear();
+  sessionStorage.clear();
+  // window.location.href = "/";
 };

@@ -6,11 +6,12 @@ const API_ENDPOINTS = {
     LOGIN: `${API_BASE_URL}/api/v1/auth/login`,
     LOGOUT: `${API_BASE_URL}/api/v1/auth/logout`,
   },
-  USERS: {
+  USER: {
+    CURRENT_USER: `${API_BASE_URL}/api/v1/users/me`,
     PROFILE: `${API_BASE_URL}/api/v1/users/profile`,
     UPDATE_PROFILE: `${API_BASE_URL}/api/v1/users/update`,
   },
-  GAMES: {
+  GAME: {
     LIST: `${API_BASE_URL}/api/v1/games/list`,
     DETAILS: (gameId: string) => `${API_BASE_URL}/api/v1/games/${gameId}`,
   },

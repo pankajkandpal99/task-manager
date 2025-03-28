@@ -9,30 +9,75 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { ChevronDown, LogOutIcon } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-// import { logout } from "../../features/auth/authSlice.ts";
+import { ChevronDown, LogOut, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { RootState } from "../../store";
+import { clearUser } from "../../features/user/user.slice";
+import { logoutClient } from "../../utils/authUtils";
 
 interface AuthButtonsProps {
   isMobile?: boolean;
 }
 
 const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
-  const dispatch = useDispatch();
-  // const { user, token } = useSelector((state: RootState) => state.auth);
+  const dispatch = useAppDispatch();
+  const { authenticated } = useAppSelector((state: RootState) => state.auth);
+  const { currentUser } = useAppSelector((state: RootState) => state.user);
 
   const defaultAvatar =
     "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+  const userInitial =
+    currentUser?.username?.charAt(0) ||
+    currentUser?.email?.charAt(0) ||
+    currentUser?.phoneNumber?.charAt(0) ||
+    "G";
 
-  // const handleLogout = () => {
-  //   dispatch(logout());
-  // };
+  const handleSignOut = async () => {
+    try {
+      dispatch(clearUser());
+      logoutClient();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col gap-2 w-full mb-6">
+        {authenticated ? (
+          <Button
+            onClick={handleSignOut}
+            variant="outline"
+            className="w-full gap-2 text-red-500 focus:text-red-500 focus:bg-red-500/10"
+          >
+            <LogOut size={16} />
+            Sign Out
+          </Button>
+        ) : (
+          <>
+            <Link to="/login" className="w-full">
+              <Button className="w-full gap-2">
+                <LogIn size={16} />
+                Sign In
+              </Button>
+            </Link>
+            {/* <Link to="/register" className="w-full">
+              <Button variant="outline" className="w-full gap-2">
+                <UserPlus size={16} />
+                Register
+              </Button>
+            </Link> */}
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-4">
-      {/* {user && token ? ( */}
+      {authenticated && currentUser ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -40,8 +85,13 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
               className="h-auto p-0 hover:bg-transparent flex flex-row gap-x-1"
             >
               <Avatar>
-                <AvatarImage src={defaultAvatar} alt="guest" />
-                {/* <AvatarFallback>{user.username.charAt(0)}</AvatarFallback> */}
+                <AvatarImage
+                  src={currentUser.avatar || defaultAvatar}
+                  alt={currentUser.username || "User"}
+                />
+                <AvatarFallback className="bg-[#3694FF]/20 text-[#3694FF]">
+                  {userInitial.toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <ChevronDown
                 size={16}
@@ -51,38 +101,58 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
             </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="w-48 mt-2" align="end">
+          <DropdownMenuContent className="w-56 mt-2" align="end">
             <DropdownMenuLabel className="flex flex-col">
               <span className="text-sm font-medium text-foreground">
-                {/* {user.username} */}
+                {currentUser.username || currentUser.phoneNumber}
               </span>
-              <span className="text-xs text-muted-foreground">
-                {/* {user.email} */}
-              </span>
+              {currentUser.email && (
+                <span className="text-xs text-muted-foreground truncate">
+                  {currentUser.email}
+                </span>
+              )}
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
 
-            {/* <DropdownMenuItem onClick={handleLogout} className="cursor-pointer"> */}
-              <LogOutIcon size={16} strokeWidth={2} className="opacity-60" />
+            <DropdownMenuItem
+              onClick={handleSignOut}
+              className="cursor-pointer text-red-500 focus:text-red-500 focus:bg-red-500/10"
+            >
+              <LogOut size={16} strokeWidth={2} className="mr-2 opacity-60" />
               <span>Sign Out</span>
-            {/* </DropdownMenuItem> */}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      {/* ) : ( */}
-        <Link to="/login">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative group"
-          >
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-60 group-hover:opacity-100 transition duration-200" />
-            <div className="relative bg-[#6FFFB4] text-[#0a101f] px-6 py-2 rounded-full font-semibold group-hover:bg-[#8FFFCC] transition-all cursor-pointer">
-              Sign in
-            </div>
-          </motion.button>
-        </Link>
-      {/* )} */}
+      ) : (
+        <>
+          <Link to="/login">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative group"
+            >
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-60 group-hover:opacity-100 transition duration-200" />
+              <div className="relative bg-[#6FFFB4] text-[#0a101f] px-6 py-2 rounded-full font-semibold group-hover:bg-[#8FFFCC] transition-all cursor-pointer">
+                Sign in
+              </div>
+            </motion.button>
+          </Link>
+
+          {/* <Link to="/register">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative group"
+            >
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#3694FF] to-[#6FFFB4] rounded-full blur opacity-60 group-hover:opacity-100 transition duration-200" />
+              <div className="relative bg-[#3694FF] text-white px-6 py-2 rounded-full font-semibold group-hover:bg-[#4FA8FF] transition-all cursor-pointer">
+                Register
+              </div>
+            </motion.button>
+          </Link> */}
+        </>
+      )}
     </div>
   );
 };

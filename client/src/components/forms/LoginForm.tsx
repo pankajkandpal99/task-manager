@@ -24,7 +24,7 @@ import { Loader } from "../general/Loader";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { Eye, EyeOff } from "lucide-react";
-import { loginUser } from "../../features/auth/authSlice";
+import { loginUser } from "../../features/auth/auth.slice";
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();

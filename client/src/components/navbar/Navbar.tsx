@@ -6,6 +6,7 @@ import { NavbarItemType } from "../../types/navbarTypes";
 import AuthButtons from "../auth/AuthButtons";
 import MobileMenu from "./MobileMenu";
 import { motion } from "framer-motion";
+import { CompanyLogo } from "../logo/CompanyLogo";
 
 interface iAppNavbarProps {
   items: NavbarItemType[];
@@ -21,16 +22,18 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
             <div className="relative">
               <div className="absolute -inset-1 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-70 group-hover:opacity-100 transition duration-200"></div>
               <div className="relative bg-[#0a101f] rounded-full p-1">
-                <img
-                  src="https://img.icons8.com/fluency/96/controller.png"
-                  className="h-10 w-10"
-                  alt="Logo"
+                <CompanyLogo
+                  type="image"
+                  src="../../../../public/Final GHG Logo.png"
+                  alt="GameHiGame logo"
+                  size="md"
+                  className="w-10 h-10"
                 />
               </div>
             </div>
           </motion.div>
           <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6FFFB4] to-[#3694FF]">
-            MultyComm
+            GameHiGame
           </span>
         </Link>
 
@@ -43,7 +46,7 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
 
         {/* Right Section */}
         <div className="flex items-center gap-3 lg:gap-6">
-          <motion.div
+          {/* <motion.div
             className="flex items-center gap-2 bg-[#121a2a]/90 px-4 py-2 rounded-lg border border-[#1e293b]/50 shadow-lg"
             whileHover={{ scale: 1.02 }}
           >
@@ -59,7 +62,7 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
               <span className="font-semibold">₹5,000</span>
               <span className="text-xs text-[#6FFFB4]">+₹200</span>
             </div>
-          </motion.div>
+          </motion.div> */}
 
           {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex">

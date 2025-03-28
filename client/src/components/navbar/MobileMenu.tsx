@@ -13,13 +13,20 @@ import {
   DrawerPortal,
   DrawerTrigger,
 } from "../ui/drawer";
+import { CompanyLogo } from "../logo/CompanyLogo";
 
 interface MobileMenuProps {
   items: NavbarItemType[];
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
-  const { user, token } = useSelector((state: RootState) => state.auth);
+  const { authenticated } = useSelector((state: RootState) => state.auth);
+  const { currentUser } = useSelector((state: RootState) => state.user);
+
+  const displayName =
+    currentUser?.username || currentUser?.phoneNumber || "Guest";
+  const displayEmail = currentUser?.email;
+  const isGuest = !authenticated;
 
   const itemVariants = {
     open: {
@@ -34,12 +41,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
     },
   };
 
-  const displayName = user?.username || "Guest";
-  const displayEmail = user?.email || "guest@email.com";
-  const isGuest = !user || !token;
-
   return (
-    <div className="lg:hidden ">
+    <div className="lg:hidden">
       <Drawer>
         <DrawerTrigger asChild>
           <button
@@ -57,15 +60,17 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                   <div className="relative">
                     <div className="absolute -inset-1 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-70" />
                     <div className="relative bg-[#0a101f] rounded-full p-1">
-                      <img
-                        src="https://img.icons8.com/fluency/96/controller.png"
-                        className="h-8 w-8"
-                        alt="Logo"
+                      <CompanyLogo
+                        type="image"
+                        src="../../../../public/Final GHG Logo.png"
+                        alt="GameHiGame logo"
+                        size="md"
+                        className="w-8 h-8"
                       />
                     </div>
                   </div>
-                  <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6FFFB4] to-[#3694FF]">
-                    MultyComm
+                  <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6FFFB4] to-[#3694FF]">
+                    GameHiGame
                   </span>
                 </div>
                 <DrawerClose className="p-2 text-[#94a3b8] hover:text-white rounded-full hover:bg-[#121a2a] transition-colors">
@@ -112,12 +117,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                       </span>
                     </div>
                   </div>
-                  <div className="bg-[#0a101f]/60 p-2 rounded-md">
-                    <span className="text-sm text-[#94a3b8]">Email</span>
-                    <div className="text-sm font-medium text-white truncate">
-                      {displayEmail}
+
+                  {/* Only show email section if email exists */}
+                  {displayEmail && (
+                    <div className="bg-[#0a101f]/60 p-2 rounded-md">
+                      <span className="text-sm text-[#94a3b8]">Email</span>
+                      <div className="text-sm font-medium text-white truncate">
+                        {displayEmail}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </motion.div>
 
                 {/* Decorative line */}
@@ -134,7 +143,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                       custom={index}
                     >
                       <DrawerClose asChild>
-                        <div className="py-1 px-2 rounded-lg hover:bg-[#121a2a]/60 transition-colors">
+                        <div className="py-1 px-2 text-sm rounded-lg hover:bg-[#121a2a]/60 transition-colors">
                           <NavbarItem item={item} isMobile />
                         </div>
                       </DrawerClose>
@@ -142,16 +151,26 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                   ))}
                 </nav>
 
-                {/* Decorative elements */}
-                <div className="relative my-4">
-                  <div className="absolute left-0 w-32 h-32 bg-[#6FFFB4]/5 rounded-full blur-xl -translate-x-1/2"></div>
-                  <div className="absolute right-0 w-24 h-24 bg-[#3694FF]/5 rounded-full blur-xl translate-x-1/2"></div>
-                  <div className="h-px w-full bg-[#1e293b] relative"></div>
+                <div className="border-t border-[#1e293b]/30 bg-[#0a101f] p-4">
+                  <motion.div
+                    initial="closed"
+                    animate="open"
+                    variants={itemVariants}
+                  >
+                    <AuthButtons isMobile />
+                  </motion.div>
                 </div>
               </div>
 
+              {/* Decorative elements */}
+              {/* <div className="relative my-4">
+                  <div className="absolute left-0 w-32 h-32 bg-[#6FFFB4]/5 rounded-full blur-xl -translate-x-1/2"></div>
+                  <div className="absolute right-0 w-24 h-24 bg-[#3694FF]/5 rounded-full blur-xl translate-x-1/2"></div>
+                  <div className="h-px w-full bg-[#1e293b] relative"></div>
+                </div> */}
+
               {/* Fixed bottom section for auth buttons */}
-              <div className="border-t border-[#1e293b]/30 bg-[#0a101f] p-4">
+              {/* <div className="border-t border-[#1e293b]/30 bg-[#0a101f] p-4">
                 <motion.div
                   initial="closed"
                   animate="open"
@@ -159,7 +178,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                 >
                   <AuthButtons isMobile />
                 </motion.div>
-              </div>
+              </div> */}
             </div>
           </DrawerContent>
         </DrawerPortal>

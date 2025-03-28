@@ -16,10 +16,11 @@ const Register = lazy(() => import("../pages/Register"));
 interface RouteConfig {
   path: string;
   element: React.ComponentType;
+  fullWidth?: boolean;
 }
 
 export const publicRoutes: RouteConfig[] = [
-  { path: "/", element: Home },
+  { path: "/", element: Home, fullWidth: true },
   { path: "/about", element: About },
   { path: "/games", element: Games },
 

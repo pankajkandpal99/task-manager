@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import StatusBadge from "./statusBadge";
 import TournamentStats from "./TournamentStats";
+import StatusBadge from "./StatusBadge";
 
 const TournamentCard: React.FC = () => {
   return (
