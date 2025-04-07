@@ -4,5 +4,7 @@ export const useAuth = () => {
   const { loading, authenticated, initialized } = useAppSelector(
     (state) => state.auth
   );
-  return { loading, authenticated, initialized };
+  const { currentUser } = useAppSelector((state) => state.user);
+
+  return { loading, authenticated, initialized, currentUser };
 };

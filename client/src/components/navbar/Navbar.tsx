@@ -7,12 +7,18 @@ import AuthButtons from "../auth/AuthButtons";
 import MobileMenu from "./MobileMenu";
 import { motion } from "framer-motion";
 import { CompanyLogo } from "../logo/CompanyLogo";
+import { useAdminAuth } from "../../hooks/useAdminAuth";
 
 interface iAppNavbarProps {
   items: NavbarItemType[];
 }
 
 export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
+  const { isAdmin } = useAdminAuth();
+  const filteredItems = items.filter(
+    (item) => item.href !== "/dashboard" || isAdmin
+  );
+
   return (
     <nav className="sticky top-0 z-40 bg-[#0a101f]/90 backdrop-blur-md py-4 border-b border-[#1e293b]/30">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 flex justify-between items-center">
@@ -39,12 +45,12 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-4">
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <NavbarItem key={item.id} item={item} />
           ))}
         </div>
 
-        {/* Right Section */}
+        {/* Right Section -- hard coded wallet */}
         <div className="flex items-center gap-3 lg:gap-6">
           {/* <motion.div
             className="flex items-center gap-2 bg-[#121a2a]/90 px-4 py-2 rounded-lg border border-[#1e293b]/50 shadow-lg"
@@ -71,7 +77,7 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
 
           {/* Mobile Menu */}
           <div className="lg:hidden">
-            <MobileMenu items={items} />
+            <MobileMenu items={filteredItems} />
           </div>
         </div>
       </div>

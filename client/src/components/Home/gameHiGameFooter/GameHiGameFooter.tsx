@@ -1,4 +1,4 @@
-const MultyCommFooter = () => {
+const GameHiGameFooter = () => {
   return (
     <footer className="bg-[#0a101f] pt-16 pb-8 relative">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
@@ -8,10 +8,10 @@ const MultyCommFooter = () => {
               <div className="relative">
                 <div className="w-8 h-8 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-lg"></div>
                 <div className="absolute inset-0 flex items-center justify-center text-[#0a101f] font-bold text-lg">
-                  M
+                  G
                 </div>
               </div>
-              <span className="font-bold text-xl">MultyComm</span>
+              <span className="font-bold text-xl">GameHiGame</span>
             </div>
             <p className="text-[#94a3b8] mb-6 max-w-xs">
               India's fastest growing gaming platform with over 1 million active
@@ -223,7 +223,7 @@ const MultyCommFooter = () => {
         <div className="border-t border-[#1e293b] pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-[#94a3b8] text-sm">
-              © 2025 MultyComm. All rights reserved.
+              © 2025 GameHiGame. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
               <img
@@ -254,4 +254,4 @@ const MultyCommFooter = () => {
   );
 };
 
-export default MultyCommFooter;
+export default GameHiGameFooter;

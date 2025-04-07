@@ -83,7 +83,7 @@ const PlayerTestimonials = () => {
       avatarUrl: "https://i.pravatar.cc/80?img=3",
       rating: 5,
       quote:
-        "I was skeptical at first, but MultyComm proved me wrong. Totally legitimate platform with instant withdrawals. Great experience!",
+        "I was skeptical at first, but GameHiGame proved me wrong. Totally legitimate platform with instant withdrawals. Great experience!",
       name: "Vikram Singh",
       location: "Bangalore",
     },
@@ -101,7 +101,7 @@ const PlayerTestimonials = () => {
       avatarUrl: "https://i.pravatar.cc/80?img=7",
       rating: 5,
       quote:
-        "Been using MultyComm for 6 months now. Earnings are consistent and the games keep getting better!",
+        "Been using GameHiGame for 6 months now. Earnings are consistent and the games keep getting better!",
       name: "Mohammed Khan",
       location: "Hyderabad",
     },
@@ -126,7 +126,7 @@ const PlayerTestimonials = () => {
           <h2 className="text-3xl font-bold">Player Testimonials</h2>
           <p className="text-[#94a3b8] mt-2 max-w-2xl mx-auto">
             See what our players have to say about their experience with
-            MultyComm
+            GameHiGame
           </p>
         </div>
 

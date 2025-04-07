@@ -3,9 +3,12 @@ import { useAuth } from "../hooks/useAuth";
 import { MainLayout } from "../layouts/mainLayout";
 import { Loader } from "../components/general/Loader";
 import { Button } from "../components/ui/button";
+import { useAdminAuth } from "../hooks/useAdminAuth";
 
 export const ProtectedRoute = () => {
   const { authenticated, initialized, loading } = useAuth();
+  const { isAdmin } = useAdminAuth();
+
   const navigate = useNavigate();
 
   if (loading || !initialized) {
@@ -25,6 +28,20 @@ export const ProtectedRoute = () => {
             Please login to view this content
           </p>
           <Button onClick={() => navigate("/login")}>Go to Login</Button>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <MainLayout>
+        <div className="flex flex-col items-center justify-center h-[80vh] gap-4">
+          <h1 className="text-2xl font-bold">Access Denied</h1>
+          <p className="text-muted-foreground">
+            You don't have admin privileges to access this page
+          </p>
+          <Button onClick={() => navigate("/")}>Go to Home</Button>
         </div>
       </MainLayout>
     );

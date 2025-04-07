@@ -8,7 +8,7 @@ import {
 import FeaturesSection from "../../../sections/featuredGames/FeaturesSection";
 import { Feature } from "../../../sections/featuredGames";
 
-const multyCommFeatures: Feature[] = [
+const gameHiGameFeatures: Feature[] = [
   {
     id: "secure-payments",
     title: "Secure Payments",
@@ -39,16 +39,16 @@ const multyCommFeatures: Feature[] = [
   },
 ];
 
-const MultyCommFeatures: React.FC = () => {
+const GameHiGameFeatures: React.FC = () => {
   return (
     <FeaturesSection
-      title="Why Choose MultyComm?"
+      title="Why Choose GameHiGame?"
       subtitle="We provide the best gaming experience with exciting features"
-      features={multyCommFeatures}
+      features={gameHiGameFeatures}
       variant="boxed"
       columns={4}
     />
   );
 };
 
-export default MultyCommFeatures;
+export default GameHiGameFeatures;

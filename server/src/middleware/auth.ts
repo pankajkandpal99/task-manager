@@ -15,7 +15,7 @@ export const requireAuth = (
   }
 
   const token = authHeader.split(" ")[1];
-  console.log("token in server : ", token);
+  // console.log("token in server : ", token);
 
   try {
     const decoded = jwt.verify(token, env.JWT_SECRET) as {
@@ -24,7 +24,7 @@ export const requireAuth = (
       role?: string;
     };
 
-    console.log("token inside decoded : ", decoded);
+    // console.log("token inside decoded : ", decoded);
 
     // Add user to request context
     req.context.user = {
