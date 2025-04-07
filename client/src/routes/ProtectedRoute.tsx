@@ -33,7 +33,7 @@ export const ProtectedRoute = () => {
     );
   }
 
-  if (!isAdmin) {
+  if (!isAdmin && !authenticated) {
     return (
       <MainLayout>
         <div className="flex flex-col items-center justify-center h-[80vh] gap-4">

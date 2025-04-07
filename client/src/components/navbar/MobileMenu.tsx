@@ -3,7 +3,7 @@ import { NavbarItem } from "./NavbarItem";
 import { NavbarItemType } from "../../types/navbarTypes";
 import AuthButtons from "../auth/AuthButtons";
 import { motion } from "framer-motion";
-import { X, User, Menu } from "lucide-react";
+import { X, User, Menu, ShieldCheck } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import {
@@ -14,6 +14,7 @@ import {
   DrawerTrigger,
 } from "../ui/drawer";
 import { CompanyLogo } from "../logo/CompanyLogo";
+import { Link } from "react-router-dom";
 
 interface MobileMenuProps {
   items: NavbarItemType[];
@@ -79,7 +80,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
               </div>
 
               <div className="flex-1 overflow-y-auto px-4">
-                {/* User Profile Information */}
                 <motion.div
                   initial="closed"
                   animate="open"
@@ -118,6 +118,19 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                     </div>
                   </div>
 
+                  {/* {currentUser.role === "ADMIN" && (
+                    <Link to="/admin-dashboard">
+                      <DropdownMenuItem className="cursor-pointer text-blue-500 focus:text-blue-500 focus:bg-blue-500/10">
+                        <ShieldCheck
+                          size={16}
+                          strokeWidth={2}
+                          className="mr-2 opacity-60"
+                        />
+                        <span>Admin Dashboard</span>
+                      </DropdownMenuItem>
+                    </Link>
+                  )} */}
+
                   {/* Only show email section if email exists */}
                   {displayEmail && (
                     <div className="bg-[#0a101f]/60 p-2 rounded-md">
@@ -129,10 +142,23 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                   )}
                 </motion.div>
 
-                {/* Decorative line */}
-                <div className="h-px w-full bg-gradient-to-r from-[#6FFFB4]/20 via-[#3694FF]/20 to-[#6FFFB4]/20 mb-6"></div>
+                {currentUser?.role === "ADMIN" && (
+                  <Link to="/admin-dashboard" className="block mt-3 mb-1">
+                    <div className="flex items-center gap-2 p-2 rounded-md bg-gradient-to-r from-[#6FFFB4]/10 to-[#3694FF]/10 border border-[#1e293b] hover:bg-[#121a2a]/80 transition-all cursor-pointer">
+                      <ShieldCheck
+                        size={16}
+                        strokeWidth={2}
+                        className="text-[#6FFFB4]"
+                      />
+                      <span className="text-sm font-medium bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] bg-clip-text text-transparent">
+                        Admin Dashboard
+                      </span>
+                    </div>
+                  </Link>
+                )}
 
-                {/* Menu Items with animation */}
+                <div className="h-px w-full bg-gradient-to-r from-[#6FFFB4]/20 via-[#3694FF]/20 to-[#6FFFB4]/20 my-6"></div>
+
                 <nav className="space-y-1 pb-6">
                   {items.map((item, index) => (
                     <motion.div
@@ -161,24 +187,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                   </motion.div>
                 </div>
               </div>
-
-              {/* Decorative elements */}
-              {/* <div className="relative my-4">
-                  <div className="absolute left-0 w-32 h-32 bg-[#6FFFB4]/5 rounded-full blur-xl -translate-x-1/2"></div>
-                  <div className="absolute right-0 w-24 h-24 bg-[#3694FF]/5 rounded-full blur-xl translate-x-1/2"></div>
-                  <div className="h-px w-full bg-[#1e293b] relative"></div>
-                </div> */}
-
-              {/* Fixed bottom section for auth buttons */}
-              {/* <div className="border-t border-[#1e293b]/30 bg-[#0a101f] p-4">
-                <motion.div
-                  initial="closed"
-                  animate="open"
-                  variants={itemVariants}
-                >
-                  <AuthButtons isMobile />
-                </motion.div>
-              </div> */}
             </div>
           </DrawerContent>
         </DrawerPortal>

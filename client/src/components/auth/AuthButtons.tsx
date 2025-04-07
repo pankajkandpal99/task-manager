@@ -9,7 +9,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { ChevronDown, LogOut, LogIn } from "lucide-react";
+import { ChevronDown, LogOut, LogIn, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
@@ -114,6 +114,19 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
+
+            {currentUser.role === "ADMIN" && (
+              <Link to="/admin-dashboard">
+                <DropdownMenuItem className="cursor-pointer text-blue-500 focus:text-blue-500 focus:bg-blue-500/10">
+                  <ShieldCheck
+                    size={16}
+                    strokeWidth={2}
+                    className="mr-2 opacity-60"
+                  />
+                  <span>Admin Dashboard</span>
+                </DropdownMenuItem>
+              </Link>
+            )}
 
             <DropdownMenuItem
               onClick={handleSignOut}

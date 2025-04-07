@@ -16,7 +16,7 @@ interface iAppNavbarProps {
 export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
   const { isAdmin } = useAdminAuth();
   const filteredItems = items.filter(
-    (item) => item.href !== "/dashboard" || isAdmin
+    (item) => item.href !== "/admin-dashboard" || isAdmin
   );
 
   return (
@@ -50,8 +50,8 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
           ))}
         </div>
 
-        {/* Right Section -- hard coded wallet */}
         <div className="flex items-center gap-3 lg:gap-6">
+          {/* Right Section -- hard coded wallet */}
           {/* <motion.div
             className="flex items-center gap-2 bg-[#121a2a]/90 px-4 py-2 rounded-lg border border-[#1e293b]/50 shadow-lg"
             whileHover={{ scale: 1.02 }}

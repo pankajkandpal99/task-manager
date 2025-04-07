@@ -2,7 +2,7 @@ import React, { lazy } from "react";
 
 const Home = lazy(() => import("../pages/Home"));
 const About = lazy(() => import("../pages/About"));
-const Dashboard = lazy(() => import("../pages/Dashboard"));
+const Dashboard = lazy(() => import("../pages/AdminDashboard"));
 const Games = lazy(() => import("../pages/Games"));
 const Contest = lazy(() => import("../pages/Contest"));
 const Leaderboard = lazy(() => import("../pages/Leaderboard"));
@@ -38,7 +38,7 @@ export const authRoutes: RouteConfig[] = [
 
 export const protectedRoutes: RouteConfig[] = [
   { path: "/leaderboard", element: Leaderboard },
-  { path: "/dashboard", element: Dashboard },
+  { path: "/admin-dashboard", element: Dashboard },
 ];
 
 export const notFoundRoute: RouteConfig = { path: "*", element: NotFound };

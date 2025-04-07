@@ -1,0 +1,380 @@
+import { Plus, Trash2, Upload } from "lucide-react";
+import { useRef, useState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { toast } from "sonner";
+
+interface ImageUploadManagerProps {
+  images: (string | File)[];
+  onChange: (images: (string | File)[]) => void;
+  maxImages?: number;
+  ButtonText?: string;
+  acceptedFormats?: string;
+  maxFileSizeMB?: number;
+}
+
+type ImagePreviewMap = Record<number, string>;
+
+const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
+  images,
+  onChange,
+  maxImages = 10,
+  ButtonText = "Upload Image",
+  acceptedFormats = "image/jpeg, image/png, image/webp",
+  maxFileSizeMB = 5,
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imagePreviews, setImagePreviews] = useState<ImagePreviewMap>({});
+  const [urlInput, setUrlInput] = useState<string>("");
+  const [urlError, setUrlError] = useState<string | null>(null);
+
+  const showError = (message: string) => {
+    toast.error(message);
+  };
+
+  const validateImageUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleAddImageUrl = () => {
+    const trimmedUrl = urlInput.trim();
+    if (!trimmedUrl) {
+      setUrlError("Image URL cannot be empty");
+      return;
+    }
+
+    if (!validateImageUrl(trimmedUrl)) {
+      setUrlError("Please enter a valid URL");
+      return;
+    }
+
+    if (images.length >= maxImages) {
+      showError(`Maximum ${maxImages} images allowed.`);
+      return;
+    }
+
+    setUrlError(null);
+    const newImages = [...images, trimmedUrl];
+    onChange(newImages);
+    setUrlInput("");
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) return;
+
+    if (images.length >= maxImages) {
+      showError(`Maximum ${maxImages} images allowed.`);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    const file = event.target.files[0];
+    const validTypes = acceptedFormats.split(", ");
+
+    if (!validTypes.includes(file.type)) {
+      showError(`Invalid file type. Accepted formats: ${acceptedFormats}`);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    if (file.size > maxFileSizeMB * 1024 * 1024) {
+      showError(`File size exceeds ${maxFileSizeMB}MB limit`);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    const newImages = [...images, file];
+    onChange(newImages);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImagePreviews((prev) => ({
+        ...prev,
+        [newImages.length - 1]: reader.result as string,
+      }));
+    };
+    reader.readAsDataURL(file);
+
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newImages = images.filter((_, i) => i !== index);
+    onChange(newImages);
+
+    // Remove preview
+    const newPreviews = { ...imagePreviews };
+    delete newPreviews[index];
+    setImagePreviews(newPreviews);
+  };
+
+  const getImageSrc = (image: string | File, index: number) => {
+    if (typeof image === "string") return image;
+    return imagePreviews[index] || "";
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex-1 space-y-1">
+            <Input
+              placeholder="Enter image URL"
+              value={urlInput}
+              onChange={(e) => {
+                setUrlInput(e.target.value);
+                if (urlError) setUrlError(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddImageUrl();
+                }
+              }}
+              className={urlError ? "border-destructive" : ""}
+            />
+            {urlError && <p className="text-xs text-destructive">{urlError}</p>}
+          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full sm:w-auto cursor-pointer"
+            onClick={handleAddImageUrl}
+            disabled={!urlInput.trim()}
+          >
+            <Plus className="h-4 w-4 mr-0" /> Add URL
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept={acceptedFormats}
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full hover:bg-transparent cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload className="h-4 w-4 mr-1" /> {ButtonText}
+          </Button>
+        </div>
+      </div>
+
+      {images.length === 0 && (
+        <div className="text-muted-foreground text-sm text-center py-4">
+          No images added yet
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {images.map((image, index) => {
+          const src = getImageSrc(image, index);
+          if (!src) return null;
+
+          return (
+            <div key={index} className="relative group">
+              <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                <img
+                  src={src}
+                  alt={`Image ${index + 1}`}
+                  className="w-full h-full object-cover cursor-pointer"
+                />
+              </div>
+              <Button
+                type="button"
+                variant="destructive"
+                size="icon"
+                className="absolute cursor-pointer top-2 right-2 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity h-8 w-8"
+                onClick={() => handleRemoveImage(index)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+              <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-1 sm:p-2 text-xs truncate">
+                {typeof image === "string" ? image : image.name}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default ImageUploadManager;
+
+// import { Plus, Trash2, Upload } from "lucide-react";
+// import { useRef, useState } from "react";
+// import { Button } from "../ui/button";
+// import { Input } from "../ui/input";
+
+// interface ImageUploadManagerProps {
+//   images: (string | File)[];
+//   onChange: (images: (string | File)[]) => void;
+//   maxImages?: number;
+//   ButtonText?: string;
+//   acceptedFormats?: string;
+// }
+
+// type ImagePreviewMap = Record<number, string>;
+
+// const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
+//   images,
+//   onChange,
+//   maxImages = Infinity,
+//   ButtonText = "Upload Image",
+//   acceptedFormats = "image/jpeg, image/png, image/webp",
+// }) => {
+//   const fileInputRef = useRef<HTMLInputElement>(null);
+//   const [imagePreviews, setImagePreviews] = useState<ImagePreviewMap>({});
+//   const [urlInput, setUrlInput] = useState<string>("");
+
+//   const handleAddImageUrl = () => {
+//     if (!urlInput.trim()) return;
+//     if (images.length >= maxImages) {
+//       alert(`Maximum ${maxImages} images allowed.`);
+//       return;
+//     }
+
+//     const newImages = [...images, urlInput.trim()];
+//     onChange(newImages);
+//     setUrlInput("");
+//   };
+
+//   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     if (event.target.files && event.target.files.length > 0) {
+//       if (images.length >= maxImages) {
+//         alert(`Maximum ${maxImages} images allowed.`);
+//         if (fileInputRef.current) {
+//           fileInputRef.current.value = "";
+//         }
+//         return;
+//       }
+
+//       const file = event.target.files[0];
+//       const newImages = [...images, file];
+//       onChange(newImages);
+
+//       // Create preview for the new file
+//       const reader = new FileReader();
+//       reader.onload = () => {
+//         setImagePreviews((prev) => ({
+//           ...prev,
+//           [newImages.length - 1]: reader.result as string,
+//         }));
+//       };
+//       reader.readAsDataURL(file);
+
+//       // Reset file input
+//       if (fileInputRef.current) {
+//         fileInputRef.current.value = "";
+//       }
+//     }
+//   };
+
+//   const handleRemoveImage = (index: number) => {
+//     const newImages = images.filter((_, i) => i !== index);
+//     onChange(newImages);
+
+//     // Remove preview
+//     const newPreviews = { ...imagePreviews };
+//     delete newPreviews[index];
+//     setImagePreviews(newPreviews);
+//   };
+
+//   const getImageSrc = (image: string | File, index: number) => {
+//     if (typeof image === "string") return image;
+//     return imagePreviews[index] || "";
+//   };
+
+//   return (
+//     <div className="space-y-4">
+//       <div className="flex flex-col gap-4">
+//         <div className="flex flex-col sm:flex-row gap-2">
+//           <Input
+//             placeholder="Enter image URL"
+//             className="flex-1"
+//             value={urlInput}
+//             onChange={(e) => setUrlInput(e.target.value)}
+//             onKeyDown={(e) => {
+//               if (e.key === "Enter") {
+//                 e.preventDefault();
+//                 handleAddImageUrl();
+//               }
+//             }}
+//           />
+//           <Button
+//             type="button"
+//             variant="secondary"
+//             className="w-full sm:w-auto cursor-pointer"
+//             onClick={handleAddImageUrl}
+//           >
+//             <Plus className="h-4 w-4 mr-0" /> Add URL
+//           </Button>
+//         </div>
+
+//         <div className="flex items-center gap-2">
+//           <input
+//             type="file"
+//             ref={fileInputRef}
+//             accept={acceptedFormats}
+//             onChange={handleFileChange}
+//             className="hidden"
+//           />
+//           <Button
+//             type="button"
+//             variant="outline"
+//             className="w-full hover:bg-transparent cursor-pointer"
+//             onClick={() => fileInputRef.current?.click()}
+//           >
+//             <Upload className="h-4 w-4 mr-1" /> {ButtonText}
+//           </Button>
+//         </div>
+//       </div>
+
+//       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//         {images.map((image, index) => {
+//           const src = getImageSrc(image, index);
+//           if (!src) return null;
+
+//           return (
+//             <div key={index} className="relative group">
+//               <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+//                 <img
+//                   src={src}
+//                   alt={`Image ${index + 1}`}
+//                   className="w-full h-full object-cover cursor-pointer"
+//                 />
+//               </div>
+//               <Button
+//                 type="button"
+//                 variant="destructive"
+//                 size="icon"
+//                 className="absolute cursor-pointer top-2 right-2 opacity-30 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity h-8 w-8"
+//                 onClick={() => handleRemoveImage(index)}
+//               >
+//                 <Trash2 className="h-4 w-4" />
+//               </Button>
+//               <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-1 sm:p-2 text-xs truncate">
+//                 {typeof image === "string" ? image : image.name}
+//               </div>
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ImageUploadManager;
