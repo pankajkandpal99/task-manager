@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import HeroSectionForm from "./HeroSectionForm";
 import HeroSectionPreview from "./HeroSectionPreview";
 import { HeroSectionContent } from "./HeroSectionTypes";
 import { Save } from "lucide-react";
 import { HeroSectionFormValues } from "../../../../schema/admin/HeroSectionSchema";
+import { HeroSectionService } from "../../../../services/admin/hero-section.service";
+import { toast } from "sonner";
 
 const HeroSectionAdmin: React.FC = () => {
   const [heroContent, setHeroContent] = useState<HeroSectionContent>({
@@ -30,24 +33,33 @@ const HeroSectionAdmin: React.FC = () => {
 
   const [previewMode, setPreviewMode] = useState(false);
 
-  const handleSubmit = (values: HeroSectionFormValues) => {
-    console.log("Form submitted with values:", values);
-    // Convert form values to HeroSectionContent
-    const updatedContent: HeroSectionContent = {
-      ...values,
-    };
-    setHeroContent(updatedContent);
-    saveChanges(updatedContent);
+  const handleSubmit = async (values: HeroSectionFormValues) => {
+    try {
+      // console.log("Form submitted with values:", values);
+      const savedData = await HeroSectionService.postHeroSection(values);
+
+      const updatedContent: HeroSectionContent = {
+        ...savedData,
+        backgroundImages: savedData.backgroundImages || [],
+      };
+
+      setHeroContent(updatedContent);
+      saveChanges(updatedContent);
+      // toast.success("Hero section saved successfully!");
+    } catch (error: any) {
+      console.error("Error saving hero section:", error);
+      toast.error("Failed to save hero section");
+    }
   };
 
-  console.log("Hero Content:", heroContent);
+  // console.log("Hero Content:", heroContent);
 
   const saveChanges = (content?: HeroSectionContent) => {
     // Use the passed content if available, otherwise use the state
     const dataToSave = content || heroContent;
     console.log("Saving changes:", dataToSave);
     // Here you would typically make an API call to save the changes
-    alert("Changes saved successfully!");
+    toast.success("Changes saved successfully!");
   };
 
   return (

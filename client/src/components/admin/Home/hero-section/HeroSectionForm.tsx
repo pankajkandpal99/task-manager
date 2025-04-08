@@ -76,9 +76,7 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
 
   const processSubmit = async (values: HeroSectionFormValues) => {
     try {
-      // Handle file uploads if needed before submitting
       await onSubmit(values);
-      toast.success("Hero section saved successfully");
     } catch (error) {
       toast.error("Failed to save hero section. Please try again.");
       console.error("Submission error:", error);

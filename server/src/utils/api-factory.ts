@@ -5,13 +5,21 @@ import { ZodSchema } from "zod";
 import { requireAuth } from "../middleware/auth";
 import { HttpResponse } from "../utils/service-response";
 import { TransactionHooks } from "../hooks/transactions";
+import {
+  EnhancedUploadOptions,
+  FileUploadHooks,
+} from "../hooks/file-upload-hook";
 
-type ApiHandlerOptions = {
+export type ApiHandlerOptions = {
   bodySchema?: ZodSchema;
   querySchema?: ZodSchema;
   requireAuth?: boolean;
   useTransaction?: boolean;
   auditLog?: boolean;
+  fileUpload?: {
+    enabled: boolean;
+    options?: Partial<EnhancedUploadOptions>;
+  };
 };
 
 export function createApiHandler(
@@ -20,12 +28,38 @@ export function createApiHandler(
 ): RequestHandler[] {
   const middlewares: RequestHandler[] = [];
 
-  // Authentication
   if (options.requireAuth !== false) {
     middlewares.push(requireAuth as RequestHandler);
   }
 
-  // Validation
+  if (options.fileUpload?.enabled) {
+    middlewares.push(
+      async (req: Request, res: Response, next: NextFunction) => {
+        const context = (req as any).context;
+        try {
+          await FileUploadHooks.processFileUpload(
+            context,
+            options.fileUpload?.options
+          );
+          next();
+        } catch (error) {
+          HttpResponse.error(
+            res,
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+            400,
+            {
+              type: "FileUploadError",
+              details:
+                process.env.NODE_ENV === "production" ? undefined : error,
+            }
+          );
+        }
+      }
+    );
+  }
+
   if (options.bodySchema || options.querySchema) {
     middlewares.push(
       async (req: Request, res: Response, next: NextFunction) => {
