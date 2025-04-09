@@ -63,6 +63,8 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
 
     const newTexts = [...currentValues.scrollingTexts, trimmedText];
     setValue("scrollingTexts", newTexts, { shouldValidate: true });
+
+    setScrollingTextInput(""); // Clear the input field after adding
   };
 
   const handleRemoveScrollingText = (index: number) => {

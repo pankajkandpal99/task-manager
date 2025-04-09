@@ -59,23 +59,31 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       } overflow-hidden flex justify-center relative`}
     >
       <div className="absolute inset-0 z-0">
-        {mergedContent.backgroundImages.map((image, index) => (
-          <motion.div
-            key={image}
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${image})`,
-              backgroundPosition: "center",
-              backgroundSize: "cover",
-            }}
-            initial={{ opacity: 0 }}
-            animate={{
-              opacity: index === currentImageIndex ? 0.8 : 0,
-              scale: index === currentImageIndex ? 1 : 1.05,
-            }}
-            transition={{ duration: 1.2, ease: [0.6, 0.05, 0.5, 0.95] }}
-          />
-        ))}
+        {mergedContent.backgroundImages.map((image, index) => {
+          // If image is a File object, create a URL for it
+          const imageUrl =
+            typeof image === "string" ? image : URL.createObjectURL(image);
+          const uniqueKey =
+            typeof image === "string" ? image : `file-${image.name}-${index}`;
+
+          return (
+            <motion.div
+              key={uniqueKey}
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${imageUrl})`,
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+              }}
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: index === currentImageIndex ? 0.8 : 0,
+                scale: index === currentImageIndex ? 1 : 1.05,
+              }}
+              transition={{ duration: 1.2, ease: [0.6, 0.05, 0.5, 0.95] }}
+            />
+          );
+        })}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
       </div>
 
