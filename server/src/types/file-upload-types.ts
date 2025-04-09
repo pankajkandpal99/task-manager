@@ -1,20 +1,21 @@
-export type FileInfo = {
+export interface FileInfo {
   fieldname: string;
   filename: string;
+  originalFilename: string;
   encoding: string;
   mimetype: string;
   size: number;
   destination: string;
   path: string;
-};
+}
 
-export type UploadOptions = {
+export interface UploadOptions {
   maxFileSize?: number;
   allowedMimeTypes?: string[];
   destination?: string;
-};
+}
 
-export type UploadResult = {
+export interface UploadResult {
   files: FileInfo[];
   fields: Record<string, any>;
-};
+}

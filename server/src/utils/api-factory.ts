@@ -19,6 +19,10 @@ export type ApiHandlerOptions = {
   fileUpload?: {
     enabled: boolean;
     options?: Partial<EnhancedUploadOptions>;
+
+    // Add multipart-specific options
+    convertTextToJson?: boolean;
+    validateBeforeAuth?: boolean;
   };
 };
 
@@ -28,19 +32,19 @@ export function createApiHandler(
 ): RequestHandler[] {
   const middlewares: RequestHandler[] = [];
 
-  if (options.requireAuth !== false) {
-    middlewares.push(requireAuth as RequestHandler);
-  }
-
-  if (options.fileUpload?.enabled) {
+  // Handle file uploads first if validateBeforeAuth is true
+  if (options.fileUpload?.enabled && options.fileUpload?.validateBeforeAuth) {
     middlewares.push(
       async (req: Request, res: Response, next: NextFunction) => {
         const context = (req as any).context;
+
         try {
-          await FileUploadHooks.processFileUpload(
-            context,
-            options.fileUpload?.options
-          );
+          const uploadOptions = {
+            ...options.fileUpload?.options,
+            convertTextToJson: options.fileUpload?.convertTextToJson !== false, // Default to true
+          };
+
+          await FileUploadHooks.processFileUpload(context, uploadOptions);
           next();
         } catch (error) {
           HttpResponse.error(
@@ -60,6 +64,44 @@ export function createApiHandler(
     );
   }
 
+  // Authentication middleware
+  if (options.requireAuth !== false) {
+    middlewares.push(requireAuth as RequestHandler);
+  }
+
+  // Handle file uploads after auth if validateBeforeAuth is false
+  if (options.fileUpload?.enabled && !options.fileUpload?.validateBeforeAuth) {
+    middlewares.push(
+      async (req: Request, res: Response, next: NextFunction) => {
+        const context = (req as any).context;
+
+        try {
+          const uploadOptions = {
+            ...options.fileUpload?.options,
+            convertTextToJson: options.fileUpload?.convertTextToJson !== false, // Default to true
+          };
+
+          await FileUploadHooks.processFileUpload(context, uploadOptions);
+          next();
+        } catch (error) {
+          HttpResponse.error(
+            res,
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+            400,
+            {
+              type: "FileUploadError",
+              details:
+                process.env.NODE_ENV === "production" ? undefined : error,
+            }
+          );
+        }
+      }
+    );
+  }
+
+  // Schema validation middleware
   if (options.bodySchema || options.querySchema) {
     middlewares.push(
       async (req: Request, res: Response, next: NextFunction) => {
@@ -83,6 +125,7 @@ export function createApiHandler(
     );
   }
 
+  // Main handler middleware
   middlewares.push(async (req: Request, res: Response) => {
     const context = (req as unknown as { context: RequestContext }).context;
     let transactionStarted = false;

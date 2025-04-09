@@ -36,6 +36,9 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
     defaultValues: {
       ...content,
       transitionDuration: content.transitionDuration || 3000,
+      backgroundImages: content.backgroundImages.filter(
+        (image): image is File => image instanceof File
+      ),
     },
   });
 
@@ -73,11 +76,15 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
   };
 
   const handleImagesChange = (newImages: (string | File)[]) => {
-    setValue("backgroundImages", newImages, { shouldValidate: true });
+    const validFiles = newImages.filter(
+      (image): image is File => image instanceof File
+    );
+    setValue("backgroundImages", validFiles, { shouldValidate: true });
   };
 
   const processSubmit = async (values: HeroSectionFormValues) => {
     try {
+      // console.log("Form submitted with values:", values);
       await onSubmit(values);
     } catch (error) {
       toast.error("Failed to save hero section. Please try again.");

@@ -7,6 +7,9 @@ const allowedOrigins = env.ALLOWED_ORIGINS
 
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
+    // console.log("CORS Origin:", origin);
+    // console.log("enter inside cors : ");
+
     // Allow all origins in development
     if (env.NODE_ENV === "development") {
       return callback(null, true);

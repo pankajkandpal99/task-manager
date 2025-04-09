@@ -1,7 +1,7 @@
-import { Plus, Trash2, Upload } from "lucide-react";
+import { Trash2, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+// import { Input } from "../ui/input";
 import { toast } from "sonner";
 
 interface ImageUploadManagerProps {
@@ -25,44 +25,44 @@ const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imagePreviews, setImagePreviews] = useState<ImagePreviewMap>({});
-  const [urlInput, setUrlInput] = useState<string>("");
-  const [urlError, setUrlError] = useState<string | null>(null);
+  // const [urlInput, setUrlInput] = useState<string>("");
+  // const [urlError, setUrlError] = useState<string | null>(null);
 
   const showError = (message: string) => {
     toast.error(message);
   };
 
-  const validateImageUrl = (url: string): boolean => {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  // const validateImageUrl = (url: string): boolean => {
+  //   try {
+  //     new URL(url);
+  //     return true;
+  //   } catch {
+  //     return false;
+  //   }
+  // };
 
-  const handleAddImageUrl = () => {
-    const trimmedUrl = urlInput.trim();
-    if (!trimmedUrl) {
-      setUrlError("Image URL cannot be empty");
-      return;
-    }
+  // const handleAddImageUrl = () => {
+  //   const trimmedUrl = urlInput.trim();
+  //   if (!trimmedUrl) {
+  //     setUrlError("Image URL cannot be empty");
+  //     return;
+  //   }
 
-    if (!validateImageUrl(trimmedUrl)) {
-      setUrlError("Please enter a valid URL");
-      return;
-    }
+  //   if (!validateImageUrl(trimmedUrl)) {
+  //     setUrlError("Please enter a valid URL");
+  //     return;
+  //   }
 
-    if (images.length >= maxImages) {
-      showError(`Maximum ${maxImages} images allowed.`);
-      return;
-    }
+  //   if (images.length >= maxImages) {
+  //     showError(`Maximum ${maxImages} images allowed.`);
+  //     return;
+  //   }
 
-    setUrlError(null);
-    const newImages = [...images, trimmedUrl];
-    onChange(newImages);
-    setUrlInput("");
-  };
+  //   setUrlError(null);
+  //   const newImages = [...images, trimmedUrl];
+  //   onChange(newImages);
+  //   setUrlInput("");
+  // };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
@@ -123,7 +123,7 @@ const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row gap-2">
+        {/* <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-1 space-y-1">
             <Input
               placeholder="Enter image URL"
@@ -151,7 +151,7 @@ const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
           >
             <Plus className="h-4 w-4 mr-0" /> Add URL
           </Button>
-        </div>
+        </div> */}
 
         <div className="flex items-center gap-2">
           <input

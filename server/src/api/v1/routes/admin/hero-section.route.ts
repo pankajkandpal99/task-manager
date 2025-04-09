@@ -2,25 +2,30 @@ import { Router } from "express";
 import { createApiHandler } from "../../../../utils/api-factory";
 import { HeroSectionController } from "../../controllers/admin/hero-section.controller";
 import { withFileUpload } from "../../../../utils/file-upload-utils";
+import { heroSectionSchema } from "../../../../schema/admin/heroSectionSchema";
 
 export default (router: Router) => {
   router.post(
-    "admin/home/hero-section",
+    "/admin/home/hero-section",
     createApiHandler(
       HeroSectionController.createOrUpdateHeroSection,
       withFileUpload(
         {
           requireAuth: true,
           useTransaction: true,
-          // bodySchema: heroSectionSchema,
+          bodySchema: heroSectionSchema,
         },
-        "hero-section-image"
+        "hero-section-image",
+        {
+          convertTextToJson: true,
+          validateBeforeAuth: false,
+        }
       )
     )
   );
 
   router.get(
-    "admin/home/hero-section",
+    "/home/hero-section",
     createApiHandler(HeroSectionController.getHeroSection, {
       requireAuth: true,
       useTransaction: false,

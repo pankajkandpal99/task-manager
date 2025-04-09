@@ -8,25 +8,27 @@ import { HeroSectionFormValues } from "../../../../schema/admin/HeroSectionSchem
 import { HeroSectionService } from "../../../../services/admin/hero-section.service";
 import { toast } from "sonner";
 
+// mainHeading: "Play Exciting Games",
+//     subHeading:
+//       "Join thousands of players in our skill-based gaming tournaments",
+//     buttonText: "Play Games Now",
+//     buttonLink: "/games",
+//     backgroundImages: [],
+//     scrollingTexts: [
+//       "🏆 Win Daily Prizes up to ₹50,000 • Instant Withdrawals • 24/7 Support",
+//       "💰 Get a Chance to Win Bumper Prizes Worth ₹5 Lakhs • Play Anytime, Anywhere",
+//       "🎮 Play Skill-Based Games & Earn Real Money • Refer Friends & Get Bonus Cash",
+//       "🏅 Compete Against Top Players Across India • Daily Tournaments • Low Entry Fees",
+//     ],
+
 const HeroSectionAdmin: React.FC = () => {
   const [heroContent, setHeroContent] = useState<HeroSectionContent>({
-    mainHeading: "Play Exciting Games",
-    subHeading:
-      "Join thousands of players in our skill-based gaming tournaments",
-    buttonText: "Play Games Now",
-    buttonLink: "/games",
-    backgroundImages: [
-      "https://images.unsplash.com/photo-1637858868799-7f26a0640eb6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80",
-      "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80",
-      "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80",
-      "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80",
-    ],
-    scrollingTexts: [
-      "🏆 Win Daily Prizes up to ₹50,000 • Instant Withdrawals • 24/7 Support",
-      "💰 Get a Chance to Win Bumper Prizes Worth ₹5 Lakhs • Play Anytime, Anywhere",
-      "🎮 Play Skill-Based Games & Earn Real Money • Refer Friends & Get Bonus Cash",
-      "🏅 Compete Against Top Players Across India • Daily Tournaments • Low Entry Fees",
-    ],
+    mainHeading: "",
+    subHeading: "",
+    buttonText: "",
+    buttonLink: "",
+    backgroundImages: [],
+    scrollingTexts: [],
     transitionDuration: 3000,
     active: true,
   });

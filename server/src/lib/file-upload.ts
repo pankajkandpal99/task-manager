@@ -73,15 +73,7 @@ export const handleFileUpload = (
 
     busboy.on("file", (fieldname, file, info) => {
       const { filename, encoding, mimeType } = info;
-      const fileSize = 0;
       const chunks: Buffer[] = [];
-
-      // Generate unique filename
-      const uniqueFilename = generateUniqueFilename(filename);
-      const destinationPath = path.join(
-        mergedOptions.destination!,
-        uniqueFilename
-      );
 
       file.on("data", (chunk) => {
         chunks.push(chunk);
@@ -92,12 +84,19 @@ export const handleFileUpload = (
         const fileSize = buffer.length;
 
         try {
+          const uniqueFilename = generateUniqueFilename(filename);
+          const destinationPath = path.join(
+            mergedOptions.destination!,
+            uniqueFilename
+          );
+
           const fileInfo: Omit<FileInfo, "destination" | "path"> = {
             fieldname,
             filename: uniqueFilename,
             encoding,
             mimetype: mimeType,
             size: fileSize,
+            originalFilename: filename, 
           };
 
           validateFile(fileInfo, mergedOptions);
@@ -122,7 +121,25 @@ export const handleFileUpload = (
     });
 
     busboy.on("field", (fieldname, val) => {
-      fields[fieldname] = val;
+      // Handle array fields (fieldname[] syntax)
+      if (fieldname.endsWith("[]")) {
+        const baseFieldName = fieldname.substring(0, fieldname.length - 2);
+        if (!fields[baseFieldName]) {
+          fields[baseFieldName] = [];
+        }
+        fields[baseFieldName].push(val);
+      } else {
+        // If field appears multiple times but doesn't use array syntax,
+        // convert to array automatically
+        if (fields[fieldname] !== undefined) {
+          if (!Array.isArray(fields[fieldname])) {
+            fields[fieldname] = [fields[fieldname]];
+          }
+          fields[fieldname].push(val);
+        } else {
+          fields[fieldname] = val;
+        }
+      }
     });
 
     busboy.on("finish", () => {
