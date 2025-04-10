@@ -9,11 +9,12 @@ export enum StatusCodes {
   INTERNAL_SERVER_ERROR = 500,
 }
 
-export const ROLES = {
-  USER: "user",
-  ADMIN: "admin",
-  SUPER_ADMIN: "super_admin",
-};
+export enum ROLE {
+  USER = "USER",
+  ADMIN = "ADMIN",
+  GUEST = "GUEST",
+  SUPER_ADMIN = "SUPER_ADMIN",
+}
 
 export const ERROR_MESSAGES = {
   INVALID_CREDENTIALS: "Invalid credentials",

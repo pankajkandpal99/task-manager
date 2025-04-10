@@ -7,6 +7,7 @@ import baseRouter from "./api/v1/routes";
 import { databaseConnection } from "./lib/db";
 import { errorHandler } from "./error-handler/error-handler";
 import { corsOptions } from "./config/corsOptions";
+import path from "path";
 
 export const createApp = async () => {
   const app = express();
@@ -18,6 +19,9 @@ export const createApp = async () => {
   app.use(cookieParser());
   app.use(helmet());
   app.use(contextMiddleware(db));
+
+  const uploadsPath = path.join(__dirname, "../uploads");
+  app.use("/uploads", express.static(uploadsPath));
 
   // Routes
   app.use("/api/v1", baseRouter);

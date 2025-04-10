@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import { IUser } from "../types/model/i-user-model";
-import { AuthProvider, Role } from "../types/model/i-model";
+import { AuthProvider } from "../types/model/i-model";
+import { ROLE } from "../config/constants";
 
 const UserSchema = new Schema<IUser>(
   {
@@ -27,8 +28,8 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: Object.values(Role),
-      default: Role.USER,
+      enum: Object.values(ROLE),
+      default: ROLE.USER,
     },
     username: {
       type: String,

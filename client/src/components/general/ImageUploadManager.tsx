@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { Button } from "../ui/button";
 // import { Input } from "../ui/input";
 import { toast } from "sonner";
+import { getFullImageUrl } from "../../utils/imageUtils";
 
 interface ImageUploadManagerProps {
   images: (string | File)[];
@@ -31,6 +32,8 @@ const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
   const showError = (message: string) => {
     toast.error(message);
   };
+
+  console.log("images : ", images);
 
   // const validateImageUrl = (url: string): boolean => {
   //   try {
@@ -115,8 +118,20 @@ const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
     setImagePreviews(newPreviews);
   };
 
+  // const getImageSrc = (image: string | File, index: number) => {
+  //   console.log("image : ", image);
+  //   if (typeof image === "string") {
+  //     if (image.startsWith("http")) return image;
+  //     return `${API_BASE_URL}${image}`;
+  //   }
+  //   return imagePreviews[index] || "";
+  // };
+
   const getImageSrc = (image: string | File, index: number) => {
-    if (typeof image === "string") return image;
+    if (typeof image === "string") {
+      return getFullImageUrl(image);
+    }
+
     return imagePreviews[index] || "";
   };
 

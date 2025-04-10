@@ -9,11 +9,13 @@ import {
   EnhancedUploadOptions,
   FileUploadHooks,
 } from "../hooks/file-upload-hook";
+import { requireAdmin } from "../middleware/admin-auth";
 
 export type ApiHandlerOptions = {
   bodySchema?: ZodSchema;
   querySchema?: ZodSchema;
   requireAuth?: boolean;
+  requireAdmin?: boolean;
   useTransaction?: boolean;
   auditLog?: boolean;
   fileUpload?: {
@@ -67,6 +69,11 @@ export function createApiHandler(
   // Authentication middleware
   if (options.requireAuth !== false) {
     middlewares.push(requireAuth as RequestHandler);
+  }
+
+  // Admin authentication middleware
+  if (options.requireAdmin) {
+    middlewares.push(requireAdmin as RequestHandler);
   }
 
   // Handle file uploads after auth if validateBeforeAuth is false

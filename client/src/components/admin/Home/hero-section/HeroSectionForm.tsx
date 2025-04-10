@@ -36,9 +36,10 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
     defaultValues: {
       ...content,
       transitionDuration: content.transitionDuration || 3000,
-      backgroundImages: content.backgroundImages.filter(
-        (image): image is File => image instanceof File
-      ),
+      // backgroundImages: content.backgroundImages.filter(
+      //   (image): image is File => image instanceof File
+      // ),
+      backgroundImages: content.backgroundImages,
     },
   });
 
@@ -49,6 +50,7 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
     formState: { isSubmitting, errors },
     handleSubmit,
   } = form;
+
   const currentValues = watch();
   const [scrollingTextInput, setScrollingTextInput] = useState("");
 
@@ -75,22 +77,27 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
     setValue("scrollingTexts", newTexts, { shouldValidate: true });
   };
 
+  // const handleImagesChange = (newImages: (string | File)[]) => {
+  //   const validFiles = newImages.filter(
+  //     (image): image is File => image instanceof File
+  //   );
+  //   setValue("backgroundImages", validFiles, { shouldValidate: true });
+  // };
+
   const handleImagesChange = (newImages: (string | File)[]) => {
-    const validFiles = newImages.filter(
-      (image): image is File => image instanceof File
-    );
-    setValue("backgroundImages", validFiles, { shouldValidate: true });
+    setValue("backgroundImages", newImages, { shouldValidate: true });
   };
 
   const processSubmit = async (values: HeroSectionFormValues) => {
     try {
-      // console.log("Form submitted with values:", values);
       await onSubmit(values);
     } catch (error) {
       toast.error("Failed to save hero section. Please try again.");
       console.error("Submission error:", error);
     }
   };
+
+  console.log("content : ", currentValues);
 
   return (
     <Form {...form}>

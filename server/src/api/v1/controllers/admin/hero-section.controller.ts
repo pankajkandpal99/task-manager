@@ -26,8 +26,6 @@ export const HeroSectionController = {
           session,
         });
 
-        console.log("hero sectio controller response : ", heroSection);
-
         if (!heroSection) {
           throw new NotFoundError("Hero section not found");
         }

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { LoginFormValues, RegisterFormValues } from "../schema/authSchema";
-import { API_BASE_URL, API_ENDPOINTS } from "../api/apiConfig";
+import { API_ENDPOINTS } from "../api/apiConfig";
+import { API_BASE_URL } from "../config/config";
 
 const apiClient = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,

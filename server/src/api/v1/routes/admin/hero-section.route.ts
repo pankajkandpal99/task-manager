@@ -12,6 +12,7 @@ export default (router: Router) => {
       withFileUpload(
         {
           requireAuth: true,
+          requireAdmin: true,
           useTransaction: true,
           bodySchema: heroSectionSchema,
         },
@@ -25,7 +26,7 @@ export default (router: Router) => {
   );
 
   router.get(
-    "/home/hero-section",
+    "/admin/home/hero-section",
     createApiHandler(HeroSectionController.getHeroSection, {
       requireAuth: true,
       useTransaction: false,

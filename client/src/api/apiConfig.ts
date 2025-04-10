@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_MY_BACKEND_URL;
+import { API_BASE_URL } from "../config/config";
 
 const API_ENDPOINTS = {
   AUTH: {
@@ -23,4 +23,4 @@ const API_ENDPOINTS = {
   },
 };
 
-export { API_BASE_URL, API_ENDPOINTS };
+export { API_ENDPOINTS };

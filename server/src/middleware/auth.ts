@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { ApiResponseService } from "../services/response.service";
 import { env } from "../config/env";
+import { ROLE } from "../config/constants";
 
 export const requireAuth = (
   req: Request & { context: { user: any } },
@@ -21,16 +22,14 @@ export const requireAuth = (
     const decoded = jwt.verify(token, env.JWT_SECRET) as {
       userId: string;
       email?: string;
-      role?: string;
+      role?: ROLE;
     };
-
-    // console.log("token inside decoded : ", decoded);
 
     // Add user to request context
     req.context.user = {
       id: decoded.userId,
       email: decoded.email || "",
-      role: decoded.role || "user",
+      role: decoded.role || "USER",
     };
 
     next();

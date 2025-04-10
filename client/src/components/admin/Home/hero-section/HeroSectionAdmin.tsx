@@ -7,6 +7,9 @@ import { Save } from "lucide-react";
 import { HeroSectionFormValues } from "../../../../schema/admin/HeroSectionSchema";
 import { HeroSectionService } from "../../../../services/admin/hero-section.service";
 import { toast } from "sonner";
+import { getFullImageUrl } from "../../../../utils/imageUtils";
+import { useHeroSection } from "../../../../contexts/HeroSectionContext";
+import { defaultHeroContent } from "./heroSectionDefaults";
 
 // mainHeading: "Play Exciting Games",
 //     subHeading:
@@ -22,47 +25,36 @@ import { toast } from "sonner";
 //     ],
 
 const HeroSectionAdmin: React.FC = () => {
-  const [heroContent, setHeroContent] = useState<HeroSectionContent>({
-    mainHeading: "",
-    subHeading: "",
-    buttonText: "",
-    buttonLink: "",
-    backgroundImages: [],
-    scrollingTexts: [],
-    transitionDuration: 3000,
-    active: true,
-  });
-
+  const { heroData, setHeroData } = useHeroSection();
   const [previewMode, setPreviewMode] = useState(false);
 
   const handleSubmit = async (values: HeroSectionFormValues) => {
     try {
-      // console.log("Form submitted with values:", values);
       const savedData = await HeroSectionService.postHeroSection(values);
 
       const updatedContent: HeroSectionContent = {
-        ...savedData,
-        backgroundImages: savedData.backgroundImages || [],
+        ...savedData.data,
+        backgroundImages: savedData.data.backgroundImages.map(getFullImageUrl),
       };
 
-      setHeroContent(updatedContent);
-      saveChanges(updatedContent);
-      // toast.success("Hero section saved successfully!");
+      setHeroData(updatedContent);
+      // saveChanges(updatedContent);
+      toast.success("Hero section saved successfully!");
     } catch (error: any) {
       console.error("Error saving hero section:", error);
       toast.error("Failed to save hero section");
     }
   };
 
-  // console.log("Hero Content:", heroContent);
-
   const saveChanges = (content?: HeroSectionContent) => {
     // Use the passed content if available, otherwise use the state
-    const dataToSave = content || heroContent;
+    const dataToSave = content || heroData;
     console.log("Saving changes:", dataToSave);
     // Here you would typically make an API call to save the changes
     toast.success("Changes saved successfully!");
   };
+
+  console.log("hero data : ", heroData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a101f] to-[#060d1b] text-white p-4 sm:p-6">
@@ -92,11 +84,14 @@ const HeroSectionAdmin: React.FC = () => {
           <div className="bg-[#0a101f] rounded-xl p-4 pt-0 sm:p-6 sm:pt-0">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">Preview</h2>
             <div className="relative h-[300px] sm:h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-[#1e293b]">
-              <HeroSectionPreview content={heroContent} />
+              <HeroSectionPreview content={heroData || defaultHeroContent} />
             </div>
           </div>
         ) : (
-          <HeroSectionForm content={heroContent} onSubmit={handleSubmit} />
+          <HeroSectionForm
+            content={heroData || defaultHeroContent}
+            onSubmit={handleSubmit}
+          />
         )}
       </div>
     </div>

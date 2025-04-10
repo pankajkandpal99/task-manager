@@ -5,9 +5,10 @@ import jwt from "jsonwebtoken";
 import { User } from "../../../models/user.model";
 import { AuthenticationError, ConflictError } from "../../../error-handler";
 import { HttpResponse } from "../../../utils/service-response";
+import { ROLE } from "../../../config/constants";
 
-const generateToken = (userId: string) =>
-  jwt.sign({ userId }, env.JWT_SECRET, { expiresIn: "7d" });
+const generateToken = (userId: string, role: ROLE) =>
+  jwt.sign({ userId, role }, env.JWT_SECRET, { expiresIn: "7d" });
 
 const hashPassword = (password: string) => hash(password, 12);
 
@@ -90,7 +91,7 @@ export const AuthController = {
           throw new AuthenticationError("Invalid credentials");
         }
 
-        const token = generateToken(user._id.toString());
+        const token = generateToken(user._id.toString(), user.role as ROLE);
         context.res.cookie("token", token, {
           httpOnly: false, // true only when server side token checking
           secure: env.NODE_ENV === "production" ? true : false,
