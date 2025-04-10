@@ -10,7 +10,18 @@ export const HeroSectionService = {
 
       Object.keys(data).forEach((key) => {
         if (key !== "backgroundImages") {
-          formData.append(key, (data as any)[key]);
+          const value = (data as any)[key];
+
+          // If the value is an array or object, stringify it first
+          if (
+            typeof value === "object" &&
+            value !== null &&
+            !(value instanceof File)
+          ) {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, value);
+          }
         }
       });
 
