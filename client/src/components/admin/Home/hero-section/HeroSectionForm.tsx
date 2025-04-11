@@ -97,7 +97,7 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
     }
   };
 
-  console.log("content : ", currentValues);
+  // console.log("content : ", currentValues);
 
   return (
     <Form {...form}>

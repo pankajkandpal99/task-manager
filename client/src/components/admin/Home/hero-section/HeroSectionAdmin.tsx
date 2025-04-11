@@ -54,7 +54,7 @@ const HeroSectionAdmin: React.FC = () => {
     toast.success("Changes saved successfully!");
   };
 
-  console.log("hero data : ", heroData);
+  // console.log("hero data : ", heroData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a101f] to-[#060d1b] text-white p-4 sm:p-6">

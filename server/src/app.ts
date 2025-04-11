@@ -6,7 +6,7 @@ import { contextMiddleware } from "./middleware/context";
 import baseRouter from "./api/v1/routes";
 import { databaseConnection } from "./lib/db";
 import { errorHandler } from "./error-handler/error-handler";
-import { corsOptions } from "./config/corsOptions";
+import { corsOptions, staticCorsOptions } from "./config/corsOptions";
 import path from "path";
 
 export const createApp = async () => {
@@ -21,7 +21,16 @@ export const createApp = async () => {
   app.use(contextMiddleware(db));
 
   const uploadsPath = path.join(__dirname, "../uploads");
-  app.use("/uploads", express.static(uploadsPath));
+  app.use(
+    "/uploads",
+    cors(staticCorsOptions),
+    express.static(uploadsPath, {
+      setHeaders: (res, path) => {
+        res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+        res.setHeader("Cache-Control", "public, max-age=31536000");
+      },
+    })
+  );
 
   // Routes
   app.use("/api/v1", baseRouter);

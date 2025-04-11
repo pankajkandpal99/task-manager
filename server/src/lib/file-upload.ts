@@ -96,7 +96,7 @@ export const handleFileUpload = (
             encoding,
             mimetype: mimeType,
             size: fileSize,
-            originalFilename: filename, 
+            originalFilename: filename,
           };
 
           validateFile(fileInfo, mergedOptions);

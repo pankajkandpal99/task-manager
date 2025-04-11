@@ -13,7 +13,7 @@ export const requireAdmin = (
   // console.log("User role:", req.context.user);
 
   if (req.context.user.role !== "ADMIN") {
-    console.log("User is not an admin");
+    // console.log("User is not an admin");
     return ApiResponseService.error(res, "Admin access required", 403);
   }
 

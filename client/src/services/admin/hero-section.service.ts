@@ -60,6 +60,7 @@ export const HeroSectionService = {
       const response = await axiosInstance.get(
         API_ENDPOINTS.ADMIN.HERO_SECTION
       );
+      
       return response.data;
     } catch (error: any) {
       if (error.response) {

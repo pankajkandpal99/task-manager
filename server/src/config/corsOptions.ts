@@ -7,9 +7,6 @@ const allowedOrigins = env.ALLOWED_ORIGINS
 
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    // console.log("CORS Origin:", origin);
-    // console.log("enter inside cors : ");
-
     // Allow all origins in development
     if (env.NODE_ENV === "development") {
       return callback(null, true);
@@ -42,4 +39,10 @@ export const corsOptions: CorsOptions = {
   maxAge: 86400,
   preflightContinue: false,
   exposedHeaders: ["Set-Cookie", "Authorization", "X-CSRF-Token"],
+};
+
+export const staticCorsOptions = {
+  origin: env.ALLOWED_ORIGINS?.split(",")[0] || "*",
+  credentials: true,
+  optionsSuccessStatus: 200,
 };

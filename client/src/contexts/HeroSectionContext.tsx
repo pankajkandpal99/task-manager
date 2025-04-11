@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { HeroSectionContent } from "../components/admin/Home/hero-section";
 import { HeroSectionService } from "../services/admin/hero-section.service";
+import { getFullImageUrl } from "../utils/imageUtils";
 
 interface HeroSectionContextType {
   heroData: HeroSectionContent | null;
@@ -29,8 +30,14 @@ export const HeroSectionProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(true);
     try {
       const response = await HeroSectionService.getHeroSection();
-      console.log("Fetched hero data:", response.data);
-      setHeroData(response.data);
+      const processedData = {
+        ...response.data,
+        backgroundImages: response.data.backgroundImages.map((img: string) =>
+          getFullImageUrl(img)
+        ),
+      };
+
+      setHeroData(processedData);
     } catch (error) {
       setError("Failed to fetch hero section data");
       console.error(error);
