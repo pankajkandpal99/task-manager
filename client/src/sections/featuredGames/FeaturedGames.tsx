@@ -8,7 +8,11 @@ interface CategoryButtonProps {
   setActiveCategory: (category: string) => void;
 }
 
-const CategoryButton = ({ name, activeCategory, setActiveCategory }: CategoryButtonProps) => {
+const CategoryButton = ({
+  name,
+  activeCategory,
+  setActiveCategory,
+}: CategoryButtonProps) => {
   return (
     <button
       onClick={() => setActiveCategory(name.toLowerCase())}

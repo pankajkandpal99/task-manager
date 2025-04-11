@@ -11,6 +11,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   COOKIE_DOMAIN: z.string(),
   ALLOWED_ORIGINS: z.string(),
+  BASE_URL: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -24,6 +25,7 @@ export const env: Env = (() => {
       DATABASE_URL: process.env.DATABASE_URL,
       COOKIE_DOMAIN: process.env.COOKIE_DOMAIN,
       ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || "",
+      BASE_URL: process.env.BASE_URL || "http://localhost:8800",
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

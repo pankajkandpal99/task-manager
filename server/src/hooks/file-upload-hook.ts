@@ -10,7 +10,7 @@ import { logger } from "../utils/logger";
 export interface EnhancedUploadOptions extends UploadOptions {
   processImages?: boolean;
   imageProcessingOptions?: ImageProcessingOptions;
-  convertTextToJson?: boolean; 
+  convertTextToJson?: boolean;
 }
 
 export const FileUploadHooks = {
@@ -18,9 +18,7 @@ export const FileUploadHooks = {
     context: RequestContext,
     options: Partial<EnhancedUploadOptions> = {}
   ): Promise<void> {
-    if (!context.req.is("multipart/form-data")) {
-      return;
-    }
+    if (!context.req.is("multipart/form-data")) return;
 
     try {
       const { files, fields } = await handleFileUpload(context.req, options);
@@ -37,18 +35,14 @@ export const FileUploadHooks = {
         context.files = files;
       }
 
-      // Process fields according to options
       let processedFields = { ...fields };
 
-      // Convert JSON strings to objects when needed
       if (options.convertTextToJson) {
         processedFields = this.convertFieldsToJson(fields);
       }
 
-      // Store processed fields in context body
       context.body = { ...context.body, ...processedFields };
 
-      // Also add files to the req.body for Zod validation if needed
       if (context.files && context.files.length > 0) {
         // Group files by field name
         const filesByField = context.files.reduce(
@@ -64,13 +58,66 @@ export const FileUploadHooks = {
 
         // Add files to body for validation
         Object.keys(filesByField).forEach((fieldname) => {
-          if (filesByField[fieldname].length === 1) {
+          if (fieldname === "backgroundImages") {
+            context.body[fieldname] = filesByField[fieldname];
+          } else if (filesByField[fieldname].length === 1) {
             context.body[fieldname] = filesByField[fieldname][0];
           } else {
             context.body[fieldname] = filesByField[fieldname];
           }
         });
       }
+
+      // Handle special case for hero-section-image when backgroundImages exists in the fields
+      // This is needed because your route uses "hero-section-image" but we need to work with "backgroundImages"
+      const filesByField = context.files?.reduce(
+        (acc, file) => {
+          if (!acc[file.fieldname]) {
+            acc[file.fieldname] = [];
+          }
+          acc[file.fieldname].push(file);
+          return acc;
+        },
+        {} as Record<string, any[]>
+      );
+
+      if (
+        filesByField &&
+        filesByField["hero-section-image"] &&
+        processedFields.backgroundImages
+      ) {
+        try {
+          // console.log("Processing background images...", processedFields);
+          let existingImages;
+          if (typeof processedFields.backgroundImages === "string") {
+            try {
+              existingImages = JSON.parse(processedFields.backgroundImages);
+              if (!Array.isArray(existingImages)) {
+                existingImages = [existingImages];
+              }
+            } catch (e) {
+              existingImages = [processedFields.backgroundImages]; // If parsing fails, treat as a single string
+            }
+          } else if (Array.isArray(processedFields.backgroundImages)) {
+            existingImages = processedFields.backgroundImages;
+          } else if (processedFields.backgroundImages) {
+            existingImages = [processedFields.backgroundImages];
+          } else {
+            existingImages = [];
+          }
+
+          context.body.backgroundImages = [
+            ...existingImages,
+            ...filesByField["hero-section-image"].map(
+              (file) => `/uploads/${file.filename}`
+            ),
+          ];
+        } catch (error) {
+          logger.error("Error processing background images:", error);
+        }
+      }
+
+      // console.log("Processed body:", context.body);
 
       // Update req.body for validation middleware
       context.req.body = context.body;
@@ -80,14 +127,12 @@ export const FileUploadHooks = {
     }
   },
 
-  // Convert string fields that look like JSON to actual objects
   convertFieldsToJson(fields: Record<string, any>): Record<string, any> {
     const result: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(fields)) {
       if (typeof value === "string") {
         try {
-          // Check if the string starts with [ or { which indicates JSON
           if (
             (value.trim().startsWith("{") && value.trim().endsWith("}")) ||
             (value.trim().startsWith("[") && value.trim().endsWith("]"))

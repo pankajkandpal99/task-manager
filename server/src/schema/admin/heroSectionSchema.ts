@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Create a custom validator for file objects
 const fileValidator = z
   .object({
     fieldname: z.string(),
@@ -28,13 +27,13 @@ export const heroSectionSchema = z
       .string()
       .min(2, "Button text must be at least 2 characters")
       .max(50, "Button text cannot exceed 50 characters"),
-    // Handle backgroundImages as either an array of files or strings (for existing images)
     backgroundImages: z
-      .union([
-        z.array(fileValidator), // For uploaded files
-        z.array(z.string()), // For existing image paths
-        z.array(z.union([fileValidator, z.string()])), // For a mix of both
-      ])
+      .array(
+        z.union([
+          fileValidator, // For uploaded files
+          z.string(), // For existing image paths as strings
+        ])
+      )
       .optional(),
     existingImages: z.array(z.string()).optional(), // For existing images sent separately
     scrollingTexts: z

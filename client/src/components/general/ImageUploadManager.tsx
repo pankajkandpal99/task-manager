@@ -26,46 +26,10 @@ const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imagePreviews, setImagePreviews] = useState<ImagePreviewMap>({});
-  // const [urlInput, setUrlInput] = useState<string>("");
-  // const [urlError, setUrlError] = useState<string | null>(null);
 
   const showError = (message: string) => {
     toast.error(message);
   };
-
-  console.log("images : ", images);
-
-  // const validateImageUrl = (url: string): boolean => {
-  //   try {
-  //     new URL(url);
-  //     return true;
-  //   } catch {
-  //     return false;
-  //   }
-  // };
-
-  // const handleAddImageUrl = () => {
-  //   const trimmedUrl = urlInput.trim();
-  //   if (!trimmedUrl) {
-  //     setUrlError("Image URL cannot be empty");
-  //     return;
-  //   }
-
-  //   if (!validateImageUrl(trimmedUrl)) {
-  //     setUrlError("Please enter a valid URL");
-  //     return;
-  //   }
-
-  //   if (images.length >= maxImages) {
-  //     showError(`Maximum ${maxImages} images allowed.`);
-  //     return;
-  //   }
-
-  //   setUrlError(null);
-  //   const newImages = [...images, trimmedUrl];
-  //   onChange(newImages);
-  //   setUrlInput("");
-  // };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
@@ -117,15 +81,6 @@ const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
     delete newPreviews[index];
     setImagePreviews(newPreviews);
   };
-
-  // const getImageSrc = (image: string | File, index: number) => {
-  //   console.log("image : ", image);
-  //   if (typeof image === "string") {
-  //     if (image.startsWith("http")) return image;
-  //     return `${API_BASE_URL}${image}`;
-  //   }
-  //   return imagePreviews[index] || "";
-  // };
 
   const getImageSrc = (image: string | File, index: number) => {
     if (typeof image === "string") {

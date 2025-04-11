@@ -2,6 +2,7 @@
 import { API_ENDPOINTS } from "../../api/apiConfig";
 import { HeroSectionFormValues } from "../../schema/admin/HeroSectionSchema";
 import axiosInstance from "../../utils/axiosConfig";
+import { apiClient } from "../auth.service";
 
 export const HeroSectionService = {
   async postHeroSection(data: HeroSectionFormValues): Promise<any> {
@@ -33,6 +34,9 @@ export const HeroSectionService = {
         }
       });
 
+      // console.log("FormData:", formData); // Debugging line
+      // console.log("FormData keys:", Array.from(formData.keys())); // Debugging line
+
       const response = await axiosInstance.post(
         API_ENDPOINTS.ADMIN.HERO_SECTION,
         formData,
@@ -57,10 +61,8 @@ export const HeroSectionService = {
 
   async getHeroSection(): Promise<any> {
     try {
-      const response = await axiosInstance.get(
-        API_ENDPOINTS.ADMIN.HERO_SECTION
-      );
-      
+      const response = await apiClient.get(API_ENDPOINTS.ADMIN.HERO_SECTION);
+
       return response.data;
     } catch (error: any) {
       if (error.response) {

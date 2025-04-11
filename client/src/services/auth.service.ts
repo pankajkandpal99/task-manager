@@ -3,7 +3,7 @@ import { LoginFormValues, RegisterFormValues } from "../schema/authSchema";
 import { API_ENDPOINTS } from "../api/apiConfig";
 import { API_BASE_URL } from "../config/config";
 
-const apiClient = axios.create({
+export const apiClient = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
   withCredentials: true,
   headers: {

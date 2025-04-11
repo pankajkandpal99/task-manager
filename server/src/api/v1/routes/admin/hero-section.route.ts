@@ -28,8 +28,8 @@ export default (router: Router) => {
   router.get(
     "/admin/home/hero-section",
     createApiHandler(HeroSectionController.getHeroSection, {
-      requireAuth: true,
-      useTransaction: false,
+      requireAuth: false,
+      useTransaction: true,
     })
   );
 };

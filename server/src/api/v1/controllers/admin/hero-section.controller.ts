@@ -3,6 +3,7 @@ import { RequestContext } from "../../../../middleware/context";
 import { HeroSection } from "../../../../models/hero-section.model";
 import { HttpResponse } from "../../../../utils/service-response";
 import { logger } from "../../../../utils/logger";
+import { ImageUtils } from "../../../../utils/image-utils";
 
 export const HeroSectionController = {
   createOrUpdateHeroSection: async (context: RequestContext) => {
@@ -12,6 +13,20 @@ export const HeroSectionController = {
 
         const imageUrls =
           files?.map((file) => `/uploads/${file.filename}`) || [];
+
+        let existingImages: string[] = [];
+
+        if (body.backgroundImages && Array.isArray(body.backgroundImages)) {
+          const stringUrls = body.backgroundImages.filter(
+            (img: any) => typeof img === "string"
+          );
+
+          // Normalize the URLs by removing base URL part
+          existingImages = ImageUtils.processImageUrls(stringUrls);
+        } else if (body.existingImages && Array.isArray(body.existingImages)) {
+          existingImages = ImageUtils.processImageUrls(body.existingImages);
+        }
+
         const allImages = [...(body.existingImages || []), ...imageUrls];
 
         const heroData = {
@@ -42,11 +57,20 @@ export const HeroSectionController = {
 
   getHeroSection: async (context: RequestContext) => {
     try {
-      const heroSection = await HeroSection.findOne({});
-      if (!heroSection) {
-        throw new NotFoundError("Hero section not found");
-      }
-      return HttpResponse.send(context.res, heroSection.toObject(), 200);
+      const result = await context.withTransaction(async (session) => {
+        const heroSection = await HeroSection.findOne({})
+          .session(session)
+          .readConcern("majority")
+          .lean();
+
+        if (!heroSection) {
+          throw new NotFoundError("Hero section not found");
+        }
+
+        return heroSection;
+      });
+
+      return HttpResponse.send(context.res, result, 200);
     } catch (error) {
       logger.error("Error fetching hero section:", error);
       throw error;
