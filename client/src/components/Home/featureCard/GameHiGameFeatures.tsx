@@ -5,8 +5,8 @@ import {
   PaymentIcon,
   SecurityIcon,
 } from "./FeatureIcon";
-import FeaturesSection from "../../../sections/featuredGames/FeaturesSection";
-import { Feature } from "../../../sections/featuredGames";
+import FeaturesSection from "../../../sections/categoryGames/CategoryGamesSection";
+import { Feature } from "../../../sections/categoryGames";
 
 const gameHiGameFeatures: Feature[] = [
   {

@@ -1,5 +1,5 @@
-import { Feature } from "../../../sections/featuredGames";
-import FeaturesSection from "../../../sections/featuredGames/FeaturesSection";
+import { Feature } from "../../../sections/categoryGames";
+import FeaturesSection from "../../../sections/categoryGames/CategoryGamesSection";
 import FeatureCard from "./FeatureCard";
 
 // Example of how to use your existing features with the updated component

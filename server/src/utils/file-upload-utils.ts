@@ -10,6 +10,7 @@ export function withFileUpload(
   multipartOptions?: {
     convertTextToJson?: boolean;
     validateBeforeAuth?: boolean;
+    pathStructure?: string;
   }
 ): ApiHandlerOptions {
   return {
@@ -18,7 +19,10 @@ export function withFileUpload(
       enabled: true,
       convertTextToJson: multipartOptions?.convertTextToJson ?? true,
       validateBeforeAuth: multipartOptions?.validateBeforeAuth ?? false,
-      options: getFileUploadConfig(configKey),
+      options: {
+        ...getFileUploadConfig(configKey),
+        pathStructure: multipartOptions?.pathStructure,
+      },
     },
   };
 }

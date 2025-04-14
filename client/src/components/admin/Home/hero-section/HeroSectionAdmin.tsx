@@ -11,19 +11,6 @@ import { getFullImageUrl } from "../../../../utils/imageUtils";
 import { useHeroSection } from "../../../../contexts/HeroSectionContext";
 import { defaultHeroContent } from "./heroSectionDefaults";
 
-// mainHeading: "Play Exciting Games",
-//     subHeading:
-//       "Join thousands of players in our skill-based gaming tournaments",
-//     buttonText: "Play Games Now",
-//     buttonLink: "/games",
-//     backgroundImages: [],
-//     scrollingTexts: [
-//       "🏆 Win Daily Prizes up to ₹50,000 • Instant Withdrawals • 24/7 Support",
-//       "💰 Get a Chance to Win Bumper Prizes Worth ₹5 Lakhs • Play Anytime, Anywhere",
-//       "🎮 Play Skill-Based Games & Earn Real Money • Refer Friends & Get Bonus Cash",
-//       "🏅 Compete Against Top Players Across India • Daily Tournaments • Low Entry Fees",
-//     ],
-
 const HeroSectionAdmin: React.FC = () => {
   const { heroData, setHeroData } = useHeroSection();
   const [previewMode, setPreviewMode] = useState(false);
@@ -53,8 +40,6 @@ const HeroSectionAdmin: React.FC = () => {
     // Here you would typically make an API call to save the changes
     toast.success("Changes saved successfully!");
   };
-
-  // console.log("hero data : ", heroData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a101f] to-[#060d1b] text-white p-4 sm:p-6">

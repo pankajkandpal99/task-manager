@@ -1,6 +1,6 @@
 import AnimatedBackground from "../components/Home/backgroundElements/AnimatedBackground";
 import HeroSection from "../sections/heroSection/HeroSection";
-import FeaturedGames from "../sections/featuredGames/FeaturedGames";
+import FeaturedGames from "../sections/categoryGames/CategoryGames";
 import LiveTournaments from "../sections/liveTournaments/LiveTournaments";
 import PlayerTestimonials from "../sections/testimonials/Testimonials";
 import GameHiGameFeatures from "../components/Home/featureCard/GameHiGameFeatures";

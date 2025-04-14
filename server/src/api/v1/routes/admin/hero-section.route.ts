@@ -20,6 +20,7 @@ export default (router: Router) => {
         {
           convertTextToJson: true,
           validateBeforeAuth: false,
+          pathStructure: "home/hero",
         }
       )
     )

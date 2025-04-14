@@ -6,6 +6,7 @@ import {
 } from "../services/image-processing.service";
 import { UploadOptions } from "../types/file-upload-types";
 import { logger } from "../utils/logger";
+import path from "path";
 
 export interface EnhancedUploadOptions extends UploadOptions {
   processImages?: boolean;
@@ -41,7 +42,13 @@ export const FileUploadHooks = {
         processedFields = this.convertFieldsToJson(fields);
       }
 
-      context.body = { ...context.body, ...processedFields };
+      context.body = {
+        ...context.body,
+        ...processedFields,
+        uploadPath: options.pathStructure
+          ? path.join(options.destination || "uploads", options.pathStructure)
+          : options.destination || "uploads",
+      };
 
       if (context.files && context.files.length > 0) {
         // Group files by field name

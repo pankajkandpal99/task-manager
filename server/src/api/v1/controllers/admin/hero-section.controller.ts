@@ -11,8 +11,8 @@ export const HeroSectionController = {
       const result = await context.withTransaction(async (session) => {
         const { body, files } = context;
 
-        const imageUrls =
-          files?.map((file) => `/uploads/${file.filename}`) || [];
+        // Use the publicUrl property from files which already includes the correct path
+        const imageUrls = files?.map((file) => file.publicUrl) || [];
 
         let existingImages: string[] = [];
 
@@ -27,7 +27,8 @@ export const HeroSectionController = {
           existingImages = ImageUtils.processImageUrls(body.existingImages);
         }
 
-        const allImages = [...(body.existingImages || []), ...imageUrls];
+        // Use a combination of existing images and new image URLs
+        const allImages = [...existingImages, ...imageUrls];
 
         const heroData = {
           ...body,
@@ -56,6 +57,7 @@ export const HeroSectionController = {
   },
 
   getHeroSection: async (context: RequestContext) => {
+    // This part looks fine, no changes needed
     try {
       const result = await context.withTransaction(async (session) => {
         const heroSection = await HeroSection.findOne({})

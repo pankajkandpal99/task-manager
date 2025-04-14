@@ -99,7 +99,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             transition={{ delay: 0.9 }}
             className={`mb-6 md:mb-10 lg:mb-16 flex justify-center`}
           >
-            <Link to={mergedContent.buttonLink || ""}>
+            <Link to={mergedContent.buttonLink || isPreview ? "" : "/games"}>
               <motion.button
                 whileHover={{
                   scale: 1.05,
