@@ -8,4 +8,3 @@ export interface HeroSectionContent {
   transitionDuration: number;
   active: boolean;
 }
- 
