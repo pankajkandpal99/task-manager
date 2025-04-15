@@ -24,6 +24,7 @@ import {
 import { Switch } from "../../ui/switch";
 import { Textarea } from "../../ui/textarea";
 import { Button } from "../../ui/button";
+import ImageUploadManager from "../../general/ImageUploadManager";
 
 const categories = [
   "Action",
@@ -52,7 +53,7 @@ export function GameForm({
     defaultValues: {
       title: "",
       description: "",
-      thumbnail: "",
+      thumbnail: undefined as unknown as File,
       gameUrl: "",
       category: "",
       isFeatured: false,
@@ -62,6 +63,18 @@ export function GameForm({
       ...defaultValues,
     },
   });
+
+  const handleImageChange = (files: (string | File)[]) => {
+    if (files.length > 0 && files[0] instanceof File) {
+      form.setValue("thumbnail", files[0]);
+      form.clearErrors("thumbnail");
+    } else {
+      form.setError("thumbnail", {
+        type: "required",
+        message: "Thumbnail image is required",
+      });
+    }
+  };
 
   return (
     <Form {...form}>
@@ -116,9 +129,11 @@ export function GameForm({
               <FormItem>
                 <FormLabel>Thumbnail URL</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="https://example.com/image.jpg"
-                    {...field}
+                  <ImageUploadManager
+                    images={field.value ? [field.value] : []}
+                    onChange={handleImageChange}
+                    maxImages={1}
+                    ButtonText="Upload Thumbnail"
                   />
                 </FormControl>
                 <FormDescription>

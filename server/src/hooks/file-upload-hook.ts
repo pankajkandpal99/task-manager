@@ -95,30 +95,50 @@ export const FileUploadHooks = {
       ) {
         try {
           // console.log("Processing background images...", processedFields);
-          let existingImages;
-          if (typeof processedFields.backgroundImages === "string") {
-            try {
-              existingImages = JSON.parse(processedFields.backgroundImages);
-              if (!Array.isArray(existingImages)) {
-                existingImages = [existingImages];
+          let existingImages = [];
+          if (processedFields.existingImages) {
+            if (typeof processedFields.existingImages === "string") {
+              try {
+                existingImages = JSON.parse(processedFields.existingImages);
+                if (!Array.isArray(existingImages)) {
+                  existingImages = [existingImages];
+                }
+              } catch (e) {
+                existingImages = [processedFields.existingImages];
               }
-            } catch (e) {
-              existingImages = [processedFields.backgroundImages]; // If parsing fails, treat as a single string
+            } else if (Array.isArray(processedFields.existingImages)) {
+              existingImages = processedFields.existingImages;
+            } else if (processedFields.existingImages) {
+              existingImages = [processedFields.existingImages];
             }
-          } else if (Array.isArray(processedFields.backgroundImages)) {
-            existingImages = processedFields.backgroundImages;
-          } else if (processedFields.backgroundImages) {
-            existingImages = [processedFields.backgroundImages];
-          } else {
-            existingImages = [];
           }
 
-          context.body.backgroundImages = [
-            ...existingImages,
-            ...filesByField["hero-section-image"].map(
-              (file) => `/uploads/${file.filename}`
-            ),
-          ];
+          if (processedFields.backgroundImages) {
+            let bgImages = [];
+            if (typeof processedFields.backgroundImages === "string") {
+              try {
+                bgImages = JSON.parse(processedFields.backgroundImages);
+                if (!Array.isArray(bgImages)) {
+                  bgImages = [bgImages];
+                }
+              } catch (e) {
+                bgImages = [processedFields.backgroundImages];
+              }
+            } else if (Array.isArray(processedFields.backgroundImages)) {
+              bgImages = processedFields.backgroundImages;
+            } else if (processedFields.backgroundImages) {
+              bgImages = [processedFields.backgroundImages];
+            }
+
+            existingImages = [...existingImages, ...bgImages];
+          }
+
+          const newImages = filesByField["hero-section-image"].map(
+            (file) => `/uploads/${file.filename}`
+          );
+
+          // Combine both existing and new images
+          context.body.backgroundImages = [...existingImages, ...newImages];
         } catch (error) {
           logger.error("Error processing background images:", error);
         }

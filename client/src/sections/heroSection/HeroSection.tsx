@@ -76,7 +76,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="relative z-10 text-center px-4 w-full flex flex-col justify-center items-center">
         <div className="w-full pt-12 md:pt-16 lg:pt-16 pb-24 md:pb-40 lg:pb-48">
           <motion.h1
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 text-white drop-shadow-lg px-2"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-Herobold mb-4 md:mb-6 text-white drop-shadow-lg px-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}

@@ -27,15 +27,11 @@ export const heroSectionSchema = z
       .string()
       .min(2, "Button text must be at least 2 characters")
       .max(50, "Button text cannot exceed 50 characters"),
-    backgroundImages: z
-      .array(
-        z.union([
-          fileValidator, // For uploaded files
-          z.string(), // For existing image paths as strings
-        ])
-      )
-      .optional(),
-    existingImages: z.array(z.string()).optional(), // For existing images sent separately
+    backgroundImages: z.array(z.union([fileValidator, z.string()])).optional(),
+    existingImages: z
+      .union([z.string().transform((val) => [val]), z.array(z.string())])
+      .optional()
+      .default([]),
     scrollingTexts: z
       .array(
         z

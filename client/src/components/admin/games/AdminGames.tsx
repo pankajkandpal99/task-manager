@@ -34,21 +34,27 @@ const generateMockGames = () => {
     "Strategy",
   ];
 
-  return Array.from({ length: 20 }, (_, i) => ({
-    id: `game-${i}`,
-    title: gameTitles[i % gameTitles.length],
-    thumbnail: `https://picsum.photos/300/300?random=${i}`,
-    category: categories[i % categories.length],
-    gameUrl: `https://example.com/game-${i}`,
-    description: `Description for ${gameTitles[i % gameTitles.length]}`,
-    players: Math.floor(Math.random() * 10000) + 1000,
-    isFeatured: i % 5 === 0,
-    isNew: i % 7 === 0,
-    minPlayers: 1,
-    maxPlayers: 100,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }));
+  return Array.from({ length: 20 }, (_, i) => {
+    const mockFile = new File([], `game-${i}.jpg`, {
+      type: "image/jpeg",
+    });
+
+    return {
+      id: `game-${i}`,
+      title: gameTitles[i % gameTitles.length],
+      thumbnail: mockFile,
+      category: categories[i % categories.length],
+      gameUrl: `https://example.com/game-${i}`,
+      description: `Description for ${gameTitles[i % gameTitles.length]}`,
+      players: Math.floor(Math.random() * 10000) + 1000,
+      isFeatured: i % 5 === 0,
+      isNew: i % 7 === 0,
+      minPlayers: 1,
+      maxPlayers: 100,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  });
 };
 
 export const AdminGames = () => {
@@ -58,9 +64,16 @@ export const AdminGames = () => {
 
   const handleSubmit = (values: GameFormValues) => {
     if (currentGame) {
-      // Update existing game
       setGames(
-        games.map((g) => (g.id === currentGame.id ? { ...g, ...values } : g))
+        games.map((g) =>
+          g.id === currentGame.id
+            ? {
+                ...g,
+                ...values,
+                thumbnail: values.thumbnail,
+              }
+            : g
+        )
       );
       toast.success("Game updated successfully", {
         description: `${values.title} has been updated.`,
@@ -70,6 +83,10 @@ export const AdminGames = () => {
       const newGame = {
         ...values,
         id: `game-${games.length + 1}`,
+        thumbnail:
+          typeof values.thumbnail === "string"
+            ? new File([], values.thumbnail, { type: "image/jpeg" })
+            : values.thumbnail,
         createdAt: new Date(),
         updatedAt: new Date(),
         players: Math.floor(Math.random() * 10000) + 1000,
