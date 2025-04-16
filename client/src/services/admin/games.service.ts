@@ -2,6 +2,7 @@
 import { API_ENDPOINTS } from "../../api/apiConfig";
 import { GameFormValues } from "../../schema/admin/GameSchema";
 import axiosInstance from "../../utils/axiosConfig";
+import { apiClient } from "../auth.service";
 
 export const GameService = {
   async createGame(gameData: GameFormValues) {
@@ -27,6 +28,19 @@ export const GameService = {
       if (error.response) {
         const serverError = error.response.data;
         throw new Error(serverError.error || "Failed to create game");
+      }
+      throw new Error("Network error occurred. Please try again.");
+    }
+  },
+
+  async getAllGames() {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.ADMIN.GAME_LIST);
+      return response.data;
+    } catch (error: any) {
+      if (error.response) {
+        const serverError = error.response.data;
+        throw new Error(serverError.error || "Failed to fetch games");
       }
       throw new Error("Network error occurred. Please try again.");
     }

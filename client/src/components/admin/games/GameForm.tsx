@@ -25,9 +25,9 @@ import { Switch } from "../../ui/switch";
 import { Textarea } from "../../ui/textarea";
 import { Button } from "../../ui/button";
 import ImageUploadManager from "../../general/ImageUploadManager";
-import { createGame, resetGameState, updateGame } from "../../../features/game/game.slice";
+import { resetGameState } from "../../../features/game/game.slice";
 import { useAppDispatch } from "../../../hooks/redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const categories = [
   "Action",
@@ -52,6 +52,15 @@ export function GameForm({
   isSubmitting = false,
 }: GameFormProps) {
   const dispatch = useAppDispatch();
+
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (defaultValues?.thumbnail && "publicUrl" in defaultValues.thumbnail) {
+      setExistingImageUrl(defaultValues.thumbnail.publicUrl as string);
+    }
+  }, [defaultValues]);
+
   const form = useForm<GameFormValues>({
     resolver: zodResolver(gameFormSchema),
     defaultValues: {
@@ -89,22 +98,10 @@ export function GameForm({
     }
   };
 
-  const handleFormSubmit = async (values: GameFormValues) => {
-    try {
-      if (values.id) {
-        await dispatch(
-          updateGame({ gameId: values.id, gameData: values })
-        ).unwrap();
-      } else {
-        await dispatch(createGame(values)).unwrap();
-      }
-      onSubmit(values);
-    } catch (error) {
-      console.error("Failed to save game:", error);
-    }
+  const handleFormSubmit = (values: GameFormValues) => {
+    onSubmit(values);
   };
 
-  // Reset success state when component unmounts
   useEffect(() => {
     return () => {
       dispatch(resetGameState());
@@ -168,7 +165,13 @@ export function GameForm({
                 <FormLabel>Thumbnail URL</FormLabel>
                 <FormControl>
                   <ImageUploadManager
-                    images={field.value ? [field.value] : []}
+                    images={
+                      existingImageUrl
+                        ? [existingImageUrl]
+                        : field.value
+                        ? [field.value]
+                        : []
+                    }
                     onChange={handleImageChange}
                     maxImages={1}
                     ButtonText="Upload Thumbnail"
@@ -305,7 +308,11 @@ export function GameForm({
           >
             Reset
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer"
+          >
             {isSubmitting ? "Saving..." : "Save Game"}
           </Button>
         </div>

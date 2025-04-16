@@ -24,4 +24,12 @@ export default (router: Router) => {
       )
     )
   );
+
+  router.get(
+    "/admin/games",
+    createApiHandler(GameSectionController.getAllGames, {
+      useTransaction: true,
+      requireAuth: false,
+    })
+  );
 };

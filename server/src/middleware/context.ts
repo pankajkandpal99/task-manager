@@ -13,6 +13,7 @@ export class RequestContext {
   private _session?: ClientSession;
   public files?: FileInfo[];
   public imageVariants?: FileInfo[];
+  query?: { [key: string]: string | undefined };
 
   constructor(
     public db: mongoose.Connection,

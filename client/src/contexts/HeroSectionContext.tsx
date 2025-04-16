@@ -19,7 +19,7 @@ const defaultHeroContent: HeroSectionContent = {
   mainHeading: "Welcome to Our Platform",
   subHeading: "Discover amazing features and services",
   buttonText: "Get Started",
-  buttonLink: "/signup",
+  buttonLink: "",
   backgroundImages: [
     "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",

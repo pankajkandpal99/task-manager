@@ -1,7 +1,7 @@
 import { CategoryGamesContent } from "./CategoryGamesTypes";
 
 export const defaultCategoryGamesContent: CategoryGamesContent = {
-  sectionTitle: "Featured Games",
+  sectionTitle: "Upcoming Tournaments",
   sectionDescription: "Play our most popular games and win big",
   categories: ["Popular", "New", "Tournaments", "Action", "Puzzle"],
   games: [
