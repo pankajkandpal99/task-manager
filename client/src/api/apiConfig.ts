@@ -15,8 +15,8 @@ const API_ENDPOINTS = {
     HERO_SECTION: `${API_BASE_URL}/api/v1/admin/home/hero-section`,
     CATEGORY_GAMES: `${API_BASE_URL}/api/v1/admin/home/category-game-section`,
     UPLOAD_IMAGE: `${API_BASE_URL}/api/v1/upload-image`,
-    GAME_SECTION: `${API_BASE_URL}/api/v1/admin/home/game-section`,
-    GAME_LIST: `${API_BASE_URL}/api/v1/admin/home/games`,
+    GAME_SECTION: `${API_BASE_URL}/api/v1/admin/game`,
+    GAME_LIST: `${API_BASE_URL}/api/v1/admin/games`,
   },
   GAME: {
     LIST: `${API_BASE_URL}/api/v1/games/list`,

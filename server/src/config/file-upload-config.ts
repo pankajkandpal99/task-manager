@@ -1,11 +1,16 @@
 import { EnhancedUploadOptions } from "../hooks/file-upload-hook";
 
-export type FileUploadConfigKey =
+export type BaseFileUploadConfigKey =
   | "hero-section-image"
   | "profile-image"
   | "product-image"
   | "gallery-image"
+  | "game-image"
+  | "game-thumbnail"
+  | "game-screenshot"
   | "default";
+
+export type FileUploadConfigKey = BaseFileUploadConfigKey | (string & {});
 
 export const fileUploadConfigs: Record<
   FileUploadConfigKey,
@@ -70,6 +75,50 @@ export const fileUploadConfigs: Record<
       optimizeOriginal: true,
     },
   },
+  "game-image": {
+    maxFileSize: 15 * 1024 * 1024, // 15MB
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+    processImages: true,
+    imageProcessingOptions: {
+      sizes: [
+        { width: 2000, suffix: "xl", quality: 90 },
+        { width: 1200, suffix: "lg", quality: 85 },
+        { width: 800, suffix: "md", quality: 80 },
+        { width: 400, suffix: "sm", quality: 75 },
+      ],
+      outputFormat: "webp",
+      optimizeOriginal: true,
+    },
+  },
+  "game-thumbnail": {
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
+    processImages: true,
+    imageProcessingOptions: {
+      sizes: [
+        { width: 400, suffix: "lg", quality: 85 },
+        { width: 200, suffix: "md", quality: 80 },
+        { width: 100, suffix: "sm", quality: 75 },
+      ],
+      outputFormat: "webp",
+      optimizeOriginal: true,
+    },
+  },
+  "game-screenshot": {
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
+    processImages: true,
+    imageProcessingOptions: {
+      sizes: [
+        { width: 1920, suffix: "xl", quality: 90 },
+        { width: 1280, suffix: "lg", quality: 85 },
+        { width: 768, suffix: "md", quality: 80 },
+        { width: 480, suffix: "sm", quality: 75 },
+      ],
+      outputFormat: "webp",
+      optimizeOriginal: true,
+    },
+  },
   default: {
     maxFileSize: 5 * 1024 * 1024, // 5MB
     allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -86,7 +135,19 @@ export const fileUploadConfigs: Record<
 };
 
 export function getFileUploadConfig(
-  configKey: FileUploadConfigKey = "default"
+  configKey: FileUploadConfigKey | FileUploadConfigKey[] = "default"
 ): Partial<EnhancedUploadOptions> {
-  return fileUploadConfigs[configKey] || fileUploadConfigs.default;
+  if (Array.isArray(configKey)) {
+    return configKey.reduce((mergedConfig, key) => {
+      const config =
+        fileUploadConfigs[key as BaseFileUploadConfigKey] ||
+        fileUploadConfigs.default;
+      return { ...mergedConfig, ...config };
+    }, {});
+  }
+
+  return (
+    fileUploadConfigs[configKey as BaseFileUploadConfigKey] ||
+    fileUploadConfigs.default
+  );
 }

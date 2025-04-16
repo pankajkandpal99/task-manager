@@ -12,6 +12,19 @@ export interface EnhancedUploadOptions extends UploadOptions {
   processImages?: boolean;
   imageProcessingOptions?: ImageProcessingOptions;
   convertTextToJson?: boolean;
+
+  fieldMapping?: {
+    sourceField: string;
+    targetField: string;
+    isArray?: boolean;
+    transformPath?: (filename: string) => string;
+  }[];
+  // Option to combine existing and new files
+  combineExistingFiles?: {
+    existingFieldName: string;
+    targetFieldName: string;
+    newFileFieldName: string;
+  }[];
 }
 
 export const FileUploadHooks = {
@@ -50,9 +63,11 @@ export const FileUploadHooks = {
           : options.destination || "uploads",
       };
 
+      let filesByField: Record<string, any[]> = {};
+
       if (context.files && context.files.length > 0) {
         // Group files by field name
-        const filesByField = context.files.reduce(
+        filesByField = context.files.reduce(
           (acc, file) => {
             if (!acc[file.fieldname]) {
               acc[file.fieldname] = [];
@@ -75,74 +90,92 @@ export const FileUploadHooks = {
         });
       }
 
+      // Handle dynamic field mappings
+      if (options.fieldMapping && options.fieldMapping.length > 0) {
+        this.processFieldMappings(context, filesByField, options.fieldMapping);
+      }
+
+      // Handle combining existing and new files
+      if (
+        options.combineExistingFiles &&
+        options.combineExistingFiles.length > 0
+      ) {
+        this.processCombinedFiles(
+          context,
+          filesByField,
+          processedFields,
+          options.combineExistingFiles
+        );
+      }
+
       // Handle special case for hero-section-image when backgroundImages exists in the fields
       // This is needed because your route uses "hero-section-image" but we need to work with "backgroundImages"
-      const filesByField = context.files?.reduce(
-        (acc, file) => {
-          if (!acc[file.fieldname]) {
-            acc[file.fieldname] = [];
-          }
-          acc[file.fieldname].push(file);
-          return acc;
-        },
-        {} as Record<string, any[]>
-      );
+      // const filesByField = context.files?.reduce(
+      //   (acc, file) => {
+      //     if (!acc[file.fieldname]) {
+      //       acc[file.fieldname] = [];
+      //     }
+      //     acc[file.fieldname].push(file);
+      //     return acc;
+      //   },
+      //   {} as Record<string, any[]>
+      // );
 
-      if (
-        filesByField &&
-        filesByField["hero-section-image"] &&
-        processedFields.backgroundImages
-      ) {
-        try {
-          // console.log("Processing background images...", processedFields);
-          let existingImages = [];
-          if (processedFields.existingImages) {
-            if (typeof processedFields.existingImages === "string") {
-              try {
-                existingImages = JSON.parse(processedFields.existingImages);
-                if (!Array.isArray(existingImages)) {
-                  existingImages = [existingImages];
-                }
-              } catch (e) {
-                existingImages = [processedFields.existingImages];
-              }
-            } else if (Array.isArray(processedFields.existingImages)) {
-              existingImages = processedFields.existingImages;
-            } else if (processedFields.existingImages) {
-              existingImages = [processedFields.existingImages];
-            }
-          }
+      // if (
+      //   filesByField &&
+      //   filesByField["hero-section-image"] &&
+      //   processedFields.backgroundImages
+      // ) {
+      //   try {
+      //     // console.log("Processing background images...", processedFields);
+      //     let existingImages = [];
+      //     if (processedFields.existingImages) {
+      //       if (typeof processedFields.existingImages === "string") {
+      //         try {
+      //           existingImages = JSON.parse(processedFields.existingImages);
+      //           if (!Array.isArray(existingImages)) {
+      //             existingImages = [existingImages];
+      //           }
+      //         } catch (e) {
+      //           existingImages = [processedFields.existingImages];
+      //         }
+      //       } else if (Array.isArray(processedFields.existingImages)) {
+      //         existingImages = processedFields.existingImages;
+      //       } else if (processedFields.existingImages) {
+      //         existingImages = [processedFields.existingImages];
+      //       }
+      //     }
 
-          if (processedFields.backgroundImages) {
-            let bgImages = [];
-            if (typeof processedFields.backgroundImages === "string") {
-              try {
-                bgImages = JSON.parse(processedFields.backgroundImages);
-                if (!Array.isArray(bgImages)) {
-                  bgImages = [bgImages];
-                }
-              } catch (e) {
-                bgImages = [processedFields.backgroundImages];
-              }
-            } else if (Array.isArray(processedFields.backgroundImages)) {
-              bgImages = processedFields.backgroundImages;
-            } else if (processedFields.backgroundImages) {
-              bgImages = [processedFields.backgroundImages];
-            }
+      //     if (processedFields.backgroundImages) {
+      //       let bgImages = [];
+      //       if (typeof processedFields.backgroundImages === "string") {
+      //         try {
+      //           bgImages = JSON.parse(processedFields.backgroundImages);
+      //           if (!Array.isArray(bgImages)) {
+      //             bgImages = [bgImages];
+      //           }
+      //         } catch (e) {
+      //           bgImages = [processedFields.backgroundImages];
+      //         }
+      //       } else if (Array.isArray(processedFields.backgroundImages)) {
+      //         bgImages = processedFields.backgroundImages;
+      //       } else if (processedFields.backgroundImages) {
+      //         bgImages = [processedFields.backgroundImages];
+      //       }
 
-            existingImages = [...existingImages, ...bgImages];
-          }
+      //       existingImages = [...existingImages, ...bgImages];
+      //     }
 
-          const newImages = filesByField["hero-section-image"].map(
-            (file) => `/uploads/${file.filename}`
-          );
+      //     const newImages = filesByField["hero-section-image"].map(
+      //       (file) => `/uploads/${file.filename}`
+      //     );
 
-          // Combine both existing and new images
-          context.body.backgroundImages = [...existingImages, ...newImages];
-        } catch (error) {
-          logger.error("Error processing background images:", error);
-        }
-      }
+      //     // Combine both existing and new images
+      //     context.body.backgroundImages = [...existingImages, ...newImages];
+      //   } catch (error) {
+      //     logger.error("Error processing background images:", error);
+      //   }
+      // }
 
       // console.log("Processed body:", context.body);
 
@@ -152,6 +185,81 @@ export const FileUploadHooks = {
       logger.error("File upload processing failed:", error);
       throw error;
     }
+  },
+
+  processFieldMappings(
+    context: RequestContext,
+    filesByField: Record<string, any[]>,
+    fieldMappings: EnhancedUploadOptions["fieldMapping"] = []
+  ): void {
+    fieldMappings.forEach((mapping) => {
+      if (filesByField[mapping.sourceField]) {
+        const transformPath =
+          mapping.transformPath ||
+          ((filename: string) => `/uploads/${filename}`);
+
+        const mappedFiles = filesByField[mapping.sourceField].map((file) =>
+          transformPath(file.filename)
+        );
+
+        if (mapping.isArray) {
+          context.body[mapping.targetField] = mappedFiles;
+        } else if (mappedFiles.length === 1) {
+          context.body[mapping.targetField] = mappedFiles[0];
+        } else {
+          context.body[mapping.targetField] = mappedFiles;
+        }
+      }
+    });
+  },
+
+  processCombinedFiles(
+    context: RequestContext,
+    filesByField: Record<string, any[]>,
+    processedFields: Record<string, any>,
+    combineOptions: EnhancedUploadOptions["combineExistingFiles"] = []
+  ): void {
+    combineOptions.forEach((option) => {
+      try {
+        // Get existing files
+        let existingFiles = [];
+        if (processedFields[option.existingFieldName]) {
+          existingFiles = this.parseArrayField(
+            processedFields[option.existingFieldName]
+          );
+        }
+
+        // Get new files
+        const newFiles =
+          filesByField[option.newFileFieldName]?.map(
+            (file) => `/uploads/${file.filename}`
+          ) || [];
+
+        // Combine both existing and new files
+        context.body[option.targetFieldName] = [...existingFiles, ...newFiles];
+      } catch (error) {
+        logger.error(
+          `Error processing combined files for field ${option.targetFieldName}:`,
+          error
+        );
+      }
+    });
+  },
+
+  parseArrayField(field: any): any[] {
+    if (typeof field === "string") {
+      try {
+        const parsed = JSON.parse(field);
+        return Array.isArray(parsed) ? parsed : [parsed];
+      } catch (e) {
+        return [field];
+      }
+    } else if (Array.isArray(field)) {
+      return field;
+    } else if (field) {
+      return [field];
+    }
+    return [];
   },
 
   convertFieldsToJson(fields: Record<string, any>): Record<string, any> {

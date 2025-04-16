@@ -1,17 +1,5 @@
 import { z } from "zod";
-
-const fileValidator = z
-  .object({
-    fieldname: z.string(),
-    filename: z.string(),
-    encoding: z.string(),
-    mimetype: z.string(),
-    size: z.number(),
-    destination: z.string(),
-    path: z.string(),
-    originalFilename: z.string().optional(),
-  })
-  .passthrough();
+import { fileValidator } from "../../lib/file-validator";
 
 export const heroSectionSchema = z
   .object({

@@ -25,6 +25,9 @@ import { Switch } from "../../ui/switch";
 import { Textarea } from "../../ui/textarea";
 import { Button } from "../../ui/button";
 import ImageUploadManager from "../../general/ImageUploadManager";
+import { createGame, resetGameState, updateGame } from "../../../features/game/game.slice";
+import { useAppDispatch } from "../../../hooks/redux";
+import { useEffect } from "react";
 
 const categories = [
   "Action",
@@ -48,6 +51,7 @@ export function GameForm({
   defaultValues,
   isSubmitting = false,
 }: GameFormProps) {
+  const dispatch = useAppDispatch();
   const form = useForm<GameFormValues>({
     resolver: zodResolver(gameFormSchema),
     defaultValues: {
@@ -65,7 +69,16 @@ export function GameForm({
   });
 
   const handleImageChange = (files: (string | File)[]) => {
-    if (files.length > 0 && files[0] instanceof File) {
+    if (files.length === 0) {
+      form.setValue("thumbnail", undefined as unknown as File);
+      form.setError("thumbnail", {
+        type: "required",
+        message: "Thumbnail image is required",
+      });
+      return;
+    }
+
+    if (files[0] instanceof File) {
       form.setValue("thumbnail", files[0]);
       form.clearErrors("thumbnail");
     } else {
@@ -76,9 +89,34 @@ export function GameForm({
     }
   };
 
+  const handleFormSubmit = async (values: GameFormValues) => {
+    try {
+      if (values.id) {
+        await dispatch(
+          updateGame({ gameId: values.id, gameData: values })
+        ).unwrap();
+      } else {
+        await dispatch(createGame(values)).unwrap();
+      }
+      onSubmit(values);
+    } catch (error) {
+      console.error("Failed to save game:", error);
+    }
+  };
+
+  // Reset success state when component unmounts
+  useEffect(() => {
+    return () => {
+      dispatch(resetGameState());
+    };
+  }, [dispatch]);
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(handleFormSubmit)}
+        className="space-y-6"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}

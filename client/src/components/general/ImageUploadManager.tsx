@@ -76,9 +76,22 @@ const ImageUploadManager: React.FC<ImageUploadManagerProps> = ({
     const newImages = images.filter((_, i) => i !== index);
     onChange(newImages);
 
-    // Remove preview
-    const newPreviews = { ...imagePreviews };
-    delete newPreviews[index];
+    // old - Remove preview
+    // const newPreviews = { ...imagePreviews };
+    // delete newPreviews[index];
+    // setImagePreviews(newPreviews);
+
+    // new
+    const newPreviews: ImagePreviewMap = {};
+    let newIndex = 0;
+
+    images.forEach((_, i) => {
+      if (i !== index && imagePreviews[i]) {
+        newPreviews[newIndex] = imagePreviews[i];
+        newIndex++;
+      }
+    });
+
     setImagePreviews(newPreviews);
   };
 
