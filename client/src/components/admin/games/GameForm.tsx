@@ -42,7 +42,9 @@ const categories = [
 
 interface GameFormProps {
   onSubmit: (values: GameFormValues) => void;
-  defaultValues?: Partial<GameFormValues>;
+  defaultValues?: Partial<GameFormValues> & {
+    thumbnail?: File | string;
+  };
   isSubmitting?: boolean;
 }
 
@@ -52,12 +54,18 @@ export function GameForm({
   isSubmitting = false,
 }: GameFormProps) {
   const dispatch = useAppDispatch();
-
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (defaultValues?.thumbnail && "publicUrl" in defaultValues.thumbnail) {
-      setExistingImageUrl(defaultValues.thumbnail.publicUrl as string);
+    if (defaultValues?.thumbnail) {
+      if (typeof defaultValues.thumbnail === "string") {
+        setExistingImageUrl(defaultValues.thumbnail);
+      } else if (
+        typeof defaultValues.thumbnail === "object" &&
+        "publicUrl" in defaultValues.thumbnail
+      ) {
+        setExistingImageUrl(defaultValues.thumbnail.publicUrl as string);
+      }
     }
   }, [defaultValues]);
 
@@ -66,7 +74,7 @@ export function GameForm({
     defaultValues: {
       title: "",
       description: "",
-      thumbnail: undefined as unknown as File,
+      thumbnail: defaultValues?.thumbnail || undefined,
       gameUrl: "",
       category: "",
       isFeatured: false,
@@ -77,18 +85,25 @@ export function GameForm({
     },
   });
 
+  const currentThumbnail = form.watch("thumbnail");
+  const displayImages = existingImageUrl
+    ? [existingImageUrl]
+    : currentThumbnail
+    ? [currentThumbnail]
+    : [];
+
   const handleImageChange = (files: (string | File)[]) => {
+    setExistingImageUrl(null);
+
     if (files.length === 0) {
       form.setValue("thumbnail", undefined as unknown as File);
-      form.setError("thumbnail", {
-        type: "required",
-        message: "Thumbnail image is required",
-      });
       return;
     }
 
     if (files[0] instanceof File) {
       form.setValue("thumbnail", files[0]);
+      form.clearErrors("thumbnail");
+    } else if (typeof files[0] === "string") {
       form.clearErrors("thumbnail");
     } else {
       form.setError("thumbnail", {
@@ -99,6 +114,7 @@ export function GameForm({
   };
 
   const handleFormSubmit = (values: GameFormValues) => {
+    console.log("values : ", values);
     onSubmit(values);
   };
 
@@ -160,26 +176,18 @@ export function GameForm({
           <FormField
             control={form.control}
             name="thumbnail"
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Thumbnail URL</FormLabel>
+                <FormLabel>Thumbnail</FormLabel>
                 <FormControl>
                   <ImageUploadManager
-                    images={
-                      existingImageUrl
-                        ? [existingImageUrl]
-                        : field.value
-                        ? [field.value]
-                        : []
-                    }
+                    images={displayImages}
                     onChange={handleImageChange}
                     maxImages={1}
                     ButtonText="Upload Thumbnail"
                   />
                 </FormControl>
-                <FormDescription>
-                  URL of the game thumbnail image
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

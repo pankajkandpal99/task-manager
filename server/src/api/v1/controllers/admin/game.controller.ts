@@ -9,9 +9,6 @@ export const GameSectionController = {
     try {
       const result = await context.withTransaction(async (session) => {
         const { body, files } = context;
-        // console.log("body : ", body);
-        // console.log("files : ", files);
-
         const {
           title,
           description,
@@ -82,9 +79,14 @@ export const GameSectionController = {
         const games = await Game.find({})
           .session(session)
           .sort({ createdAt: -1 })
-          .select("-uploadPath -thumbnail.path -__v");
+          .select("-uploadPath -thumbnail.path -__v")
+          .lean();
 
-        return games;
+        return games.map((game) => ({
+          ...game,
+          id: game._id,
+          thumbnail: game.thumbnail.publicUrl,
+        }));
       });
 
       return HttpResponse.send(context.res, result, 200);
@@ -100,7 +102,7 @@ export const GameSectionController = {
         const { id } = context.params;
 
         const game = await Game.findById(id)
-          .session(session) // Add session to the query
+          .session(session)
           .select("-uploadPath -thumbnail.path -__v");
 
         if (!game) {
@@ -119,15 +121,19 @@ export const GameSectionController = {
   updateGame: async (context: RequestContext) => {
     try {
       const result = await context.withTransaction(async (session) => {
+        console.log("context params : ", context.params);
         const { id } = context.params;
         const updateData = context.body;
 
-        const game = await Game.findById(id).session(session);
+        console.log("id : ", id);
+
+        const game = await Game.findById({ _id: id }).session(session);
+        console.log("game : ", game);
+
         if (!game) {
           throw new NotFoundError("Game not found");
         }
 
-        // Handle thumbnail update if new thumbnail is provided
         if (context.files && context.files?.length > 0) {
           const thumbnail = context.files[0];
           updateData.thumbnail = {
@@ -139,7 +145,6 @@ export const GameSectionController = {
           };
         }
 
-        // Convert string booleans to actual booleans
         if (updateData.isFeatured) {
           updateData.isFeatured = updateData.isFeatured === "true";
         }
@@ -147,7 +152,6 @@ export const GameSectionController = {
           updateData.isNew = updateData.isNew === "true";
         }
 
-        // Convert string numbers to actual numbers
         if (updateData.minPlayers) {
           updateData.minPlayers = parseInt(updateData.minPlayers);
         }
@@ -155,7 +159,6 @@ export const GameSectionController = {
           updateData.maxPlayers = parseInt(updateData.maxPlayers);
         }
 
-        // Set updatedBy
         updateData.updatedBy = context.user?.id;
 
         const updatedGame = await Game.findByIdAndUpdate(id, updateData, {

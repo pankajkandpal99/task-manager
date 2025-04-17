@@ -1,3 +1,7 @@
+import {
+  gameSchema,
+  gameUpdateSchema,
+} from "./../../../../schema/admin/gameSectionSchema";
 import { Router } from "express";
 import { createApiHandler } from "../../../../utils/api-factory";
 import { GameSectionController } from "../../controllers/admin/game.controller";
@@ -13,7 +17,7 @@ export default (router: Router) => {
           requireAuth: true,
           requireAdmin: true,
           useTransaction: true,
-          bodySchema: undefined,
+          bodySchema: gameSchema,
         },
         "game-thumbnail",
         {
@@ -30,6 +34,36 @@ export default (router: Router) => {
     createApiHandler(GameSectionController.getAllGames, {
       useTransaction: true,
       requireAuth: false,
+    })
+  );
+
+  router.put(
+    "/admin/games/:id",
+    createApiHandler(
+      GameSectionController.updateGame,
+      withFileUpload(
+        {
+          requireAuth: true,
+          requireAdmin: true,
+          useTransaction: true,
+          bodySchema: gameUpdateSchema,
+        },
+        "game-thumbnail",
+        {
+          convertTextToJson: true,
+          validateBeforeAuth: false,
+          pathStructure: "games",
+        }
+      )
+    )
+  );
+
+  router.delete(
+    "/admin/games/:id",
+    createApiHandler(GameSectionController.deleteGame, {
+      useTransaction: true,
+      requireAuth: true,
+      requireAdmin: true,
     })
   );
 };

@@ -38,16 +38,13 @@ export const fetchAllGames = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await GameService.getAllGames();
+      const processThumbnail = (thumbnail: string) =>
+        thumbnail ? getFullImageUrl(thumbnail) : "";
 
       if (Array.isArray(response.data)) {
         const processedGames = response.data.map((game: any) => ({
           ...game,
-          thumbnail: game.thumbnail?.publicUrl
-            ? {
-                ...game.thumbnail,
-                publicUrl: getFullImageUrl(game.thumbnail.publicUrl),
-              }
-            : game.thumbnail,
+          thumbnail: processThumbnail(game.thumbnail),
         }));
 
         return processedGames;
@@ -116,7 +113,7 @@ const gameSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createGame.pending, (state) => {
-        state.loading = false;
+        state.loading = true;
         state.error = null;
         state.success = false;
       })

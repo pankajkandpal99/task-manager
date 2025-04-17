@@ -1,6 +1,7 @@
 import mongoose, { ClientSession, Document, Model } from "mongoose";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { FileInfo } from "../types/file-upload-types";
+import { ROLE } from "../config/constants";
 
 export class RequestContext {
   public params: Record<string, any>;
@@ -8,7 +9,7 @@ export class RequestContext {
   public user?: {
     id: string;
     email: string;
-    role: string;
+    role: ROLE;
   };
   private _session?: ClientSession;
   public files?: FileInfo[];
@@ -20,11 +21,17 @@ export class RequestContext {
     public req: Request,
     public res: Response
   ) {
-    this.params = req.params;
-    this.body = req.body;
-    this.user = req.user as { id: string; email: string; role: string };
+    this.params = req.params || {};
+    this.body = req.body || {};
+    this.user = req.user as { id: string; email: string; role: ROLE };
     this.files = (req as any).files;
     this.imageVariants = (req as any).imageVariants;
+    this.query = Object.fromEntries(
+      Object.entries(req.query || {}).map(([key, value]) => [
+        key,
+        typeof value === "string" ? value : undefined,
+      ])
+    );
   }
 
   get session(): ClientSession | undefined {

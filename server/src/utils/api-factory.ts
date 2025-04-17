@@ -33,8 +33,12 @@ export function createApiHandler(
   options: ApiHandlerOptions = {}
 ): RequestHandler[] {
   const middlewares: RequestHandler[] = [];
+  
+  middlewares.push((req, res, next) => {
+    req.params = req.params || {};
+    next();
+  });
 
-  // Handle file uploads first if validateBeforeAuth is true
   if (options.fileUpload?.enabled && options.fileUpload?.validateBeforeAuth) {
     middlewares.push(
       async (req: Request, res: Response, next: NextFunction) => {
@@ -66,12 +70,10 @@ export function createApiHandler(
     );
   }
 
-  // Authentication middleware
   if (options.requireAuth !== false) {
     middlewares.push(requireAuth as RequestHandler);
   }
 
-  // Admin authentication middleware
   if (options.requireAdmin) {
     middlewares.push(requireAdmin as RequestHandler);
   }
@@ -108,7 +110,6 @@ export function createApiHandler(
     );
   }
 
-  // Schema validation middleware
   if (options.bodySchema || options.querySchema) {
     middlewares.push(
       async (req: Request, res: Response, next: NextFunction) => {
@@ -132,7 +133,6 @@ export function createApiHandler(
     );
   }
 
-  // Main handler middleware
   middlewares.push(async (req: Request, res: Response) => {
     const context = (req as unknown as { context: RequestContext }).context;
     let transactionStarted = false;

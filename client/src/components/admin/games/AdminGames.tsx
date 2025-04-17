@@ -32,8 +32,10 @@ export const AdminGames = () => {
 
   const handleSubmit = (values: GameFormValues) => {
     if (currentGame && currentGame.id) {
+      console.log("enter submit handler : ", currentGame);
       dispatch(updateGame({ gameId: currentGame.id, gameData: values }));
     } else {
+      console.log("enter inside create : ");
       dispatch(createGame(values));
     }
   };
@@ -54,21 +56,19 @@ export const AdminGames = () => {
 
   useEffect(() => {
     if (success) {
-      if (currentGame) {
+      if (currentGame?.id) {
         toast.success("Game updated successfully", {
           description: `${currentGame.title} has been updated.`,
         });
-      } else if (isEditing) {
+      } else {
         toast.success("Game added successfully", {
           description: "New game has been added to the collection.",
         });
       }
 
-      // Reset form state
       setIsEditing(false);
       setCurrentGame(null);
 
-      // Reset redux success state and fetch fresh games
       dispatch(resetGameState());
       dispatch(fetchAllGames());
     }
@@ -79,7 +79,7 @@ export const AdminGames = () => {
       });
       dispatch(resetGameState());
     }
-  }, [success, error, dispatch, currentGame, isEditing]);
+  }, [success, error, dispatch, currentGame]);
 
   return (
     <div className="space-y-6">

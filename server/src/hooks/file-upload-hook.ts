@@ -12,6 +12,7 @@ export interface EnhancedUploadOptions extends UploadOptions {
   processImages?: boolean;
   imageProcessingOptions?: ImageProcessingOptions;
   convertTextToJson?: boolean;
+  preservePath?: boolean;
 
   fieldMapping?: {
     sourceField: string;
