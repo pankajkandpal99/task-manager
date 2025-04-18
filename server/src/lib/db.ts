@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { logger } from "../utils/logger";
 import { env } from "../config/env";
 
-// Define connection configurations for different environments
 const connectionConfigs = {
   development: {
     url: env.DATABASE_URL,
@@ -98,7 +97,6 @@ class DatabaseConnection {
     }
 
     try {
-      // Validate connection URL
       if (!config.url) {
         throw new Error("Database URL is not defined");
       }

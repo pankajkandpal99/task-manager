@@ -86,6 +86,6 @@ export const defaultCategoryGamesContent: CategoryGamesContent = {
       tags: ["sports", "popular"],
     },
   ],
-  viewAllButtonText: "View All Games",
+  viewAllButtonText: "View All tournaments",
   active: true,
 };

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { fileValidator } from "../../lib/file-validator";
 
-// Base schema without refinements
 const baseGameSchema = z
   .object({
     id: z.string().optional(),

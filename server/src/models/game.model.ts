@@ -11,14 +11,24 @@ const GameSchema = new Schema<IGame>(
     },
     description: {
       type: String,
-      required: [true, "Game description is required"],
+      // required: [true, "Game description is required"],
+      required: false,
       trim: true,
       maxlength: [500, "Game description cannot exceed 500 characters"],
     },
     category: {
       type: String,
       required: [true, "Game category is required"],
-      enum: ["Casual", "Action", "Adventure", "Puzzle", "Strategy", "Sports"],
+      enum: [
+        "Casual",
+        "Action",
+        "Adventure",
+        "Puzzle",
+        "Strategy",
+        "Sports",
+        "Simulation",
+        "RPG",
+      ],
       default: "Casual",
     },
     gameUrl: {
