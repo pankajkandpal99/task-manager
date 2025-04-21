@@ -88,7 +88,7 @@ const Games = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a101f] to-[#1a263f] py-0 px-4 sm:px-6 lg:px-8">
+    <div className="-mb-10 min-h-screen bg-gradient-to-b from-[#0a101f] to-[#1a263f] py-0 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.div
           className="text-center mb-8 pt-4"
@@ -163,8 +163,8 @@ const Games = () => {
         >
           Showing {filteredGames.length}{" "}
           {filteredGames.length === 1 ? "game" : "games"}
-          {selectedCategory !== "All" && ` in ${selectedCategory}`}
-          {searchQuery && ` matching "${searchQuery}"`}
+          {selectedCategory !== "All" && ` in "${selectedCategory}"`}
+          {searchQuery && ` matching "${searchQuery}"`}.
         </motion.div>
 
         {loading ? (
@@ -256,7 +256,7 @@ const Games = () => {
                           <Button
                             variant="secondary"
                             size="sm"
-                            className="bg-primary hover:bg-primary/90 text-white rounded-full w-12 h-12 flex items-center justify-center"
+                            className="cursor-pointer bg-primary hover:bg-primary/90 text-white rounded-full w-12 h-12 flex items-center justify-center"
                           >
                             <Play className="w-6 h-6 fill-current" />
                           </Button>
@@ -271,7 +271,7 @@ const Games = () => {
                       </CardHeader>
 
                       {/* Game info footer */}
-                      <CardFooter className="px-3 py-2 flex justify-between items-center bg-card">
+                      <CardFooter className="px-3 py-0 flex justify-between items-center bg-card">
                         <Badge
                           variant="outline"
                           className="text-xs bg-primary/10 text-primary border-primary/30"
@@ -315,7 +315,7 @@ const Games = () => {
 
             {filteredGames.length > 0 && totalPages > 0 && (
               <motion.div
-                className="my-10 pb-6 flex justify-center"
+                className="mt-10 pb-6 flex justify-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7, duration: 0.5 }}

@@ -37,18 +37,8 @@ export const FileUploadHooks = {
 
     try {
       const { files, fields } = await handleFileUpload(context.req, options);
-
-      if (options.processImages && files.length > 0) {
-        const { originals, variants } = await processMultipleImages(
-          files,
-          options.imageProcessingOptions
-        );
-
-        context.files = originals;
-        context.imageVariants = variants;
-      } else {
-        context.files = files;
-      }
+      context.files = files;
+      context.imageVariants = [];
 
       let processedFields = { ...fields };
 
@@ -108,77 +98,6 @@ export const FileUploadHooks = {
           options.combineExistingFiles
         );
       }
-
-      // Handle special case for hero-section-image when backgroundImages exists in the fields
-      // This is needed because your route uses "hero-section-image" but we need to work with "backgroundImages"
-      // const filesByField = context.files?.reduce(
-      //   (acc, file) => {
-      //     if (!acc[file.fieldname]) {
-      //       acc[file.fieldname] = [];
-      //     }
-      //     acc[file.fieldname].push(file);
-      //     return acc;
-      //   },
-      //   {} as Record<string, any[]>
-      // );
-
-      // if (
-      //   filesByField &&
-      //   filesByField["hero-section-image"] &&
-      //   processedFields.backgroundImages
-      // ) {
-      //   try {
-      //     // console.log("Processing background images...", processedFields);
-      //     let existingImages = [];
-      //     if (processedFields.existingImages) {
-      //       if (typeof processedFields.existingImages === "string") {
-      //         try {
-      //           existingImages = JSON.parse(processedFields.existingImages);
-      //           if (!Array.isArray(existingImages)) {
-      //             existingImages = [existingImages];
-      //           }
-      //         } catch (e) {
-      //           existingImages = [processedFields.existingImages];
-      //         }
-      //       } else if (Array.isArray(processedFields.existingImages)) {
-      //         existingImages = processedFields.existingImages;
-      //       } else if (processedFields.existingImages) {
-      //         existingImages = [processedFields.existingImages];
-      //       }
-      //     }
-
-      //     if (processedFields.backgroundImages) {
-      //       let bgImages = [];
-      //       if (typeof processedFields.backgroundImages === "string") {
-      //         try {
-      //           bgImages = JSON.parse(processedFields.backgroundImages);
-      //           if (!Array.isArray(bgImages)) {
-      //             bgImages = [bgImages];
-      //           }
-      //         } catch (e) {
-      //           bgImages = [processedFields.backgroundImages];
-      //         }
-      //       } else if (Array.isArray(processedFields.backgroundImages)) {
-      //         bgImages = processedFields.backgroundImages;
-      //       } else if (processedFields.backgroundImages) {
-      //         bgImages = [processedFields.backgroundImages];
-      //       }
-
-      //       existingImages = [...existingImages, ...bgImages];
-      //     }
-
-      //     const newImages = filesByField["hero-section-image"].map(
-      //       (file) => `/uploads/${file.filename}`
-      //     );
-
-      //     // Combine both existing and new images
-      //     context.body.backgroundImages = [...existingImages, ...newImages];
-      //   } catch (error) {
-      //     logger.error("Error processing background images:", error);
-      //   }
-      // }
-
-      // console.log("Processed body:", context.body);
 
       // Update req.body for validation middleware
       context.req.body = context.body;

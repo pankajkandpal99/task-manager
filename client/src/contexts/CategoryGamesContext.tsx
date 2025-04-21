@@ -53,7 +53,7 @@ export const useCategoryGames = () => {
   const context = useContext(CategoryGamesContext);
   if (!context) {
     throw new Error(
-      "useFeaturedGames must be used within a CategoryGamesProvider"
+      "useCategoryGames must be used within a CategoryGamesProvider"
     );
   }
   return context;

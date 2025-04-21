@@ -16,14 +16,6 @@ const DEFAULT_OPTIONS: UploadOptions = {
   destination: "uploads",
 };
 
-// Ensures the uploads directory exists
-// const ensureUploadsDirectoryExists = (destination: string): void => {
-//   const uploadPath = path.resolve(destination);
-//   if (!fs.existsSync(uploadPath)) {
-//     fs.mkdirSync(uploadPath, { recursive: true });
-//   }
-// };
-
 const ensureDirectoryExists = (dirPath: string): void => {
   const absolutePath = path.resolve(dirPath);
   if (!fs.existsSync(absolutePath)) {
@@ -94,10 +86,8 @@ export const handleFileUpload = (
           const buffer = Buffer.concat(chunks);
           const uniqueFilename = generateUniqueFilename(filename);
 
-          // Use full destination path for saving
           const destinationPath = path.join(fullDestination, uniqueFilename);
 
-          // Generate public URL that matches storage structure
           const publicUrlPath = mergedOptions.pathStructure
             ? path.join(mergedOptions.pathStructure, uniqueFilename)
             : uniqueFilename;
@@ -129,51 +119,6 @@ export const handleFileUpload = (
           logger.error(`File processing error: ${error}`);
           file.resume();
         }
-        // try {
-        //   const buffer = Buffer.concat(chunks);
-        //   const fileSize = buffer.length;
-
-        //   const uniqueFilename = generateUniqueFilename(filename);
-        //   const relativePath = mergedOptions.pathStructure
-        //     ? path.join(mergedOptions.pathStructure, uniqueFilename)
-        //     : uniqueFilename;
-
-        //   const destinationPath = path.join(
-        //     mergedOptions.destination!,
-        //     uniqueFilename
-        //   );
-
-        //   const publicUrl = `/uploads/${relativePath.replace(/\\/g, "/")}`;
-
-        //   const fileInfo: Omit<FileInfo, "destination" | "path" | "publicUrl"> =
-        //     {
-        //       fieldname,
-        //       filename: uniqueFilename,
-        //       encoding,
-        //       mimetype: mimeType,
-        //       size: buffer.length,
-        //       originalFilename: filename,
-        //     };
-
-        //   validateFile(fileInfo, mergedOptions);
-        //   ensureDirectoryExists(path.dirname(destinationPath));
-        //   // Write file to disk
-        //   fs.writeFileSync(destinationPath, buffer);
-
-        //   files.push({
-        //     ...fileInfo,
-        //     destination: fullDestination,
-        //     path: destinationPath,
-        //     publicUrl,
-        //   });
-
-        //   logger.info(
-        //     `File uploaded successfully: ${uniqueFilename} (${fileSize} bytes)`
-        //   );
-        // } catch (error) {
-        //   logger.error(`Error processing file ${filename}:`, error);
-        //   file.resume(); // Drain the file stream
-        // }
       });
     });
 

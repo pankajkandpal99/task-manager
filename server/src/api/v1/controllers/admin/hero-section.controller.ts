@@ -4,27 +4,34 @@ import { HeroSection } from "../../../../models/hero-section.model";
 import { HttpResponse } from "../../../../utils/service-response";
 import { logger } from "../../../../utils/logger";
 import { ImageUtils } from "../../../../utils/image-utils";
+import fs from "fs";
+import path from "path";
 
 export const HeroSectionController = {
   createOrUpdateHeroSection: async (context: RequestContext) => {
     try {
       const result = await context.withTransaction(async (session) => {
         const { body, files } = context;
-        const imageUrls = files?.map((file) => file.publicUrl) || [];
+        const newImageUrls =
+          files?.map((file) => file.publicUrl).filter(Boolean) || [];
 
-        let existingImages: string[] = [];
+        const existingHeroSection = await HeroSection.findOne({}).session(
+          session
+        );
 
-        if (body.backgroundImages && Array.isArray(body.backgroundImages)) {
-          const stringUrls = body.backgroundImages.filter(
-            (img: any) => typeof img === "string"
-          );
+        const oldImages = existingHeroSection?.backgroundImages || [];
 
-          if (stringUrls.length > 0) {
-            existingImages = [
-              ...existingImages,
-              ...ImageUtils.processImageUrls(stringUrls),
-            ];
-          }
+        const imagesToKeep = new Set();
+
+        if (Array.isArray(body.backgroundImages)) {
+          body.backgroundImages
+            .filter((img: any) => typeof img === "string")
+            .forEach((img: string) => {
+              const processedUrl = ImageUtils.processImageUrls([img])[0];
+              if (processedUrl) {
+                imagesToKeep.add(processedUrl);
+              }
+            });
         }
 
         if (body.existingImages) {
@@ -32,16 +39,50 @@ export const HeroSectionController = {
             ? body.existingImages
             : [body.existingImages];
 
-          existingImages = [
-            ...existingImages,
-            ...ImageUtils.processImageUrls(imgArray),
-          ];
+          ImageUtils.processImageUrls(imgArray)
+            .filter(Boolean)
+            .forEach((img) => imagesToKeep.add(img));
         }
 
-        console.log("Existing images after processing:", existingImages);
+        const imagesToDelete = oldImages.filter(
+          (img) => !imagesToKeep.has(img)
+        );
 
-        const allImages = [...existingImages, ...imageUrls];
-        console.log("All images:", allImages);
+        newImageUrls.forEach((url) => imagesToKeep.add(url));
+
+        const allImages = Array.from(imagesToKeep);
+
+        if (imagesToDelete.length > 0) {
+          await Promise.allSettled(
+            imagesToDelete.map(async (imagePath) => {
+              try {
+                if (!imagePath) return;
+
+                const relativePath = imagePath.replace(/^\/uploads\//, "");
+                const fullPath = path.join(
+                  process.cwd(),
+                  "public",
+                  "uploads",
+                  relativePath
+                );
+
+                if (fs.existsSync(fullPath)) {
+                  fs.unlinkSync(fullPath);
+                  logger.info(`Deleted old hero section image: ${fullPath}`);
+                } else {
+                  logger.warn(
+                    `Hero section image not found at path: ${fullPath}`
+                  );
+                }
+              } catch (err) {
+                logger.error(
+                  `Failed to delete hero section image ${imagePath}:`,
+                  err
+                );
+              }
+            })
+          );
+        }
 
         const heroData = {
           ...body,

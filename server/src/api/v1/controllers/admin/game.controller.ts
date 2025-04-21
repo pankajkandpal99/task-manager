@@ -188,12 +188,16 @@ export const GameSectionController = {
       const result = await context.withTransaction(async (session) => {
         const { id } = context.params;
 
-        const game = await Game.findByIdAndDelete(id).session(session);
+        const game = await Game.findByIdAndDelete({ _id: id }).session(session);
         if (!game) {
           throw new NotFoundError("Game not found");
         }
 
-        return { success: true, message: "Game deleted successfully" };
+        return {
+          success: true,
+          message: "Game deleted successfully",
+          deletedId: id,
+        };
       });
 
       return HttpResponse.send(context.res, result, 200);

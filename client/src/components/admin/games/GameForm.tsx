@@ -85,8 +85,6 @@ export function GameForm({
     },
   });
 
-  // console.log("form : ", defaultValues);
-
   const currentThumbnail = form.watch("thumbnail");
   const displayImages = existingImageUrl
     ? [existingImageUrl]
@@ -116,7 +114,6 @@ export function GameForm({
   };
 
   const handleFormSubmit = (values: GameFormValues) => {
-    console.log("values : ", values);
     onSubmit(values);
   };
 

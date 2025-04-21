@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
@@ -69,11 +70,7 @@ export const CategoryGamesLayout: React.FC<CategoryGamesLayoutProps> = ({
           game.tags.includes(activeCategory.toLowerCase())
         );
 
-  const gamesToShow = showAllGames
-    ? filteredGames
-    : isMobile
-    ? filteredGames.slice(0, 2)
-    : filteredGames.slice(0, 4);
+  const gamesToShow = showAllGames && filteredGames.slice(0, 4);
 
   return (
     <section className="py-8 sm:py-12 md:py-16 bg-[#0a101f]/90 relative">
@@ -110,23 +107,25 @@ export const CategoryGamesLayout: React.FC<CategoryGamesLayoutProps> = ({
         </div>
 
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-          {gamesToShow.map((game) => (
-            <motion.div
-              key={game.id}
-              className="w-full"
-              whileHover={{ y: -5 }}
-              transition={{ duration: 0.2 }}
-            >
-              <GameCard
-                title={game.title}
-                category={game.category}
-                image={game.image}
-                players={game.players}
-                prize={game.prize}
-                hot={game.hot}
-              />
-            </motion.div>
-          ))}
+          {Array.isArray(gamesToShow) &&
+            gamesToShow.map((game) => (
+              <motion.div
+                key={game.id}
+                className="w-full"
+                whileHover={{ y: -5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <GameCard
+                  title={game.title}
+                  category={game.category}
+                  image={game.image}
+                  players={game.players}
+                  prize={game.prize}
+                  hot={game.hot}
+                  playButton={false}
+                />
+              </motion.div>
+            ))}
         </div>
 
         <div className="flex justify-center mt-8 sm:mt-10 md:mt-12">

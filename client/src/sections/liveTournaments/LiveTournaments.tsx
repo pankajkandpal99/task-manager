@@ -37,7 +37,7 @@ const LiveTournaments = () => {
             className="relative group"
           >
             <div className="relative bg-gradient-to-r from-[#FF6FE5]/10 to-[#6F6FFB]/10 hover:from-[#FF6FE5]/20 hover:to-[#6F6FFB]/20 border border-[#1e293b] hover:border-[#FF6FE5]/30 px-6 py-3 rounded-lg font-medium transition-all text-white flex items-center gap-2 text-sm sm:text-base">
-              <span>View All Tournaments</span>
+              <span>View All Live Tournaments</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

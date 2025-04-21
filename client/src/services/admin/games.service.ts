@@ -83,6 +83,8 @@ export const GameService = {
       const response = await axiosInstance.delete(
         `${API_ENDPOINTS.ADMIN.GAME_LIST}/${gameId}`
       );
+
+      console.log("deleted game : ", response.data);
       return response.data;
     } catch (error: any) {
       if (error.response) {
