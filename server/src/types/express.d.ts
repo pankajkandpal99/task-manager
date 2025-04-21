@@ -1,9 +1,13 @@
 import { RequestContext } from "../middleware/context";
 import { User } from "@prisma/client";
 
-declare module "express" {
-  interface Request {
-    context: RequestContext;
-    user?: User;
+declare global {
+  namespace Express {
+    export interface Request {
+      context: RequestContext;
+      user?: User;
+      files?: any;
+      imageVariants?: any;
+    }
   }
 }

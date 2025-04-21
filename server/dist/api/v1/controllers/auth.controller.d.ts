@@ -1,4 +1,5 @@
 import { RequestContext } from "../../../middleware/context";
+import { ROLE } from "../../../config/constants";
 export declare const AuthController: {
     register: (context: RequestContext) => Promise<import("express").Response<{
         success: true;
@@ -7,7 +8,7 @@ export declare const AuthController: {
             email?: string | undefined;
             id: string;
             phoneNumber: string;
-            role: Role;
+            role: ROLE;
         };
         timestamp: string;
     }, Record<string, any>>>;

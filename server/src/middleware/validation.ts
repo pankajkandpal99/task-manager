@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { z, ZodError, ZodSchema } from "zod";
+import { ZodError, ZodSchema } from "zod";
 import { StatusCodes } from "../config/constants";
 import { HttpResponse } from "../utils/service-response";
 
@@ -24,12 +24,11 @@ export const validateRequest = (schemas: ValidationSchema): RequestHandler => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        HttpResponse.error(
-          res,
-          "Validation Error",
-          StatusCodes.BAD_REQUEST,
-          error.errors
-        );
+        HttpResponse.error(res, "Validation Error", StatusCodes.BAD_REQUEST, {
+          type: "ValidationError",
+          details: error.errors,
+          exposeStack: false,
+        });
       } else {
         next(error);
       }

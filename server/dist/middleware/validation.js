@@ -29,7 +29,11 @@ const validateRequest = (schemas) => {
         }
         catch (error) {
             if (error instanceof zod_1.ZodError) {
-                service_response_1.HttpResponse.error(res, "Validation Error", constants_1.StatusCodes.BAD_REQUEST, error.errors);
+                service_response_1.HttpResponse.error(res, "Validation Error", constants_1.StatusCodes.BAD_REQUEST, {
+                    type: "ValidationError",
+                    details: error.errors,
+                    exposeStack: false,
+                });
             }
             else {
                 next(error);

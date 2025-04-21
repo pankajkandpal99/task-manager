@@ -1,11 +1,12 @@
 import { ObjectId } from "mongoose";
-import { AuthProvider, Role } from "./i-model";
+import { AuthProvider } from "./i-model";
+import { ROLE } from "../../config/constants";
 
 export interface IUser extends Document {
   email?: string;
   password: string;
   phoneNumber: string;
-  role: Role;
+  role: ROLE;
   username?: string;
   avatar?: string;
   lastLogin?: Date;
