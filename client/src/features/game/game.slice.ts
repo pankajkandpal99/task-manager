@@ -24,7 +24,6 @@ export const createGame = createAsyncThunk(
   "game/createGame",
   async (gameData: GameFormValues, { rejectWithValue }) => {
     try {
-      console.log("game data : ", gameData);
       const response = await GameService.createGame(gameData);
       return response;
     } catch (error: any) {

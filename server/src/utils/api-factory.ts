@@ -10,6 +10,7 @@ import {
   FileUploadHooks,
 } from "../hooks/file-upload-hook";
 import { requireAdmin } from "../middleware/admin-auth";
+import { paramExtractorMiddleware } from "../middleware/param-extractor.middleware";
 
 export type ApiHandlerOptions = {
   bodySchema?: ZodSchema;
@@ -33,9 +34,18 @@ export function createApiHandler(
   options: ApiHandlerOptions = {}
 ): RequestHandler[] {
   const middlewares: RequestHandler[] = [];
-  
+  middlewares.push(paramExtractorMiddleware() as RequestHandler);
+
   middlewares.push((req, res, next) => {
     req.params = req.params || {};
+    next();
+  });
+
+  middlewares.push((req, res, next) => {
+    if (!req.params) {
+      req.params = {};
+    }
+
     next();
   });
 

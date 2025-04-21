@@ -124,7 +124,7 @@ export const handleFileUpload = (
             publicUrl,
           });
 
-          logger.info(`File uploaded: ${publicUrl} (${buffer.length} bytes)`);
+          // logger.info(`File uploaded: ${publicUrl} (${buffer.length} bytes)`);
         } catch (error) {
           logger.error(`File processing error: ${error}`);
           file.resume();

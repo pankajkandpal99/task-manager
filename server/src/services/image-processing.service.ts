@@ -141,7 +141,7 @@ export const processImage = async (
       };
 
       variants.push(variantInfo);
-      logger.info(`Created image variant: ${variantPath}`);
+      // logger.info(`Created image variant: ${variantPath}`);
     }
 
     return { original: fileInfo, variants };

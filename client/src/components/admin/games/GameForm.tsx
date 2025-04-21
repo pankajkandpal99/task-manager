@@ -85,6 +85,8 @@ export function GameForm({
     },
   });
 
+  // console.log("form : ", defaultValues);
+
   const currentThumbnail = form.watch("thumbnail");
   const displayImages = existingImageUrl
     ? [existingImageUrl]

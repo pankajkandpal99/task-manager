@@ -121,19 +121,16 @@ export const GameSectionController = {
   updateGame: async (context: RequestContext) => {
     try {
       const result = await context.withTransaction(async (session) => {
-        console.log("context params : ", context.params);
         const { id } = context.params;
         const updateData = context.body;
 
-        console.log("id : ", id);
-
         const game = await Game.findById({ _id: id }).session(session);
-        console.log("game : ", game);
 
         if (!game) {
           throw new NotFoundError("Game not found");
         }
 
+        // Handle thumbnail updates
         if (context.files && context.files?.length > 0) {
           const thumbnail = context.files[0];
           updateData.thumbnail = {
@@ -143,8 +140,18 @@ export const GameSectionController = {
             mimetype: thumbnail.mimetype,
             size: thumbnail.size,
           };
+        } else if (updateData.thumbnail) {
+          if (typeof updateData.thumbnail === "string") {
+            updateData.thumbnail = {
+              ...game.thumbnail,
+              publicUrl: updateData.thumbnail,
+            };
+          }
+        } else {
+          updateData.thumbnail = game.thumbnail;
         }
 
+        // Process boolean fields
         if (updateData.isFeatured) {
           updateData.isFeatured = updateData.isFeatured === "true";
         }
@@ -152,6 +159,7 @@ export const GameSectionController = {
           updateData.isNew = updateData.isNew === "true";
         }
 
+        // Process numeric fields
         if (updateData.minPlayers) {
           updateData.minPlayers = parseInt(updateData.minPlayers);
         }

@@ -48,11 +48,7 @@ export const GameService = {
 
   async updateGame(gameId: string, gameData: GameFormValues) {
     try {
-      console.log("enter : ", gameId);
-      console.log("enter : ", gameData);
-
       const formData = new FormData();
-      formData.append("id", gameId);
 
       Object.entries(gameData).forEach(([key, value]) => {
         if (key === "thumbnail" && value instanceof File) {
