@@ -1,10 +1,9 @@
-import { Feature } from "../../../sections/categoryGames";
 import FeaturesSection from "../../../sections/categoryGames/CategoryGamesSection";
 import FeatureCard from "./FeatureCard";
 
 // Example of how to use your existing features with the updated component
 const ExistingFeatures: React.FC = () => {
-  const features: Feature[] = [
+  const features = [
     {
       id: "daily-contests",
       icon: "🏆",

@@ -6,9 +6,8 @@ import {
   SecurityIcon,
 } from "./FeatureIcon";
 import FeaturesSection from "../../../sections/categoryGames/CategoryGamesSection";
-import { Feature } from "../../../sections/categoryGames";
 
-const gameHiGameFeatures: Feature[] = [
+const gameHiGameFeatures = [
   {
     id: "secure-payments",
     title: "Secure Payments",
