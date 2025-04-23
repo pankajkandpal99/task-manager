@@ -14,7 +14,7 @@ export const Loader: React.FC<LoaderProps> = ({ size = "large" }) => {
     >
       <Loader2
         className={`animate-spin ${
-          size === "small" ? "w-5 h-5 text-white" : "w-10 h-10 text-blue-500"
+          size === "small" ? "w-5 h-5 text-white" : "w-10 h-10 text-primary"
         }`}
         size={size === "small" ? 20 : 40}
       />

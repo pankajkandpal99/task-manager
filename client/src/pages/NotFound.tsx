@@ -7,15 +7,12 @@ const NotFound: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4">
-      {/* 404 Heading */}
       <h1 className="text-9xl font-bold text-primary">404</h1>
 
-      {/* Message */}
       <p className="text-2xl font-semibold mt-4 text-center">
         Oops! The page you're looking for doesn't exist.
       </p>
 
-      {/* Additional Info */}
       <p className="text-muted-foreground mt-2 text-center">
         It seems like you've wandered off into the unknown. Let's get you back
         on track.
@@ -28,9 +25,8 @@ const NotFound: React.FC = () => {
         Go Back Home
       </Button>
 
-      {/* Optional: Fun Illustration or Image */}
       <img
-        src="/404-illustration.svg" // Add a fun illustration in the public folder
+        src="/404-illustration.svg"
         alt="404 Illustration"
         className="mt-8 w-64 h-64 object-contain"
       />

@@ -1,29 +1,41 @@
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
-import { loadEnv } from "./config/env";
-import { PrismaClient } from "@prisma/client";
+import cookieParser from "cookie-parser";
 import { contextMiddleware } from "./middleware/context";
-import routes from "./routes";
-import { errorHandler } from "./middleware/error-handler";
+import baseRouter from "./api/v1/routes";
+import { databaseConnection } from "./lib/db";
+import { errorHandler } from "./error-handler/error-handler";
+import { corsOptions, staticCorsOptions } from "./config/corsOptions";
+import path from "path";
 
-const env = loadEnv();
-const prisma = new PrismaClient();
-
-export const createApp = () => {
+export const createApp = async () => {
   const app = express();
+  const db = databaseConnection.getConnection();
 
   // Middlewares
-  app.use(helmet());
-  app.use(cors());
   app.use(express.json());
-  app.use(contextMiddleware(prisma));
+  app.use(cors(corsOptions));
+  app.use(cookieParser());
+  app.use(helmet());
+  app.use(contextMiddleware(db));
+
+  const uploadsPath = path.join(__dirname, "../uploads");
+  app.use(
+    "/uploads",
+    cors(staticCorsOptions),
+    express.static(uploadsPath, {
+      setHeaders: (res, path) => {
+        res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+        res.setHeader("Cache-Control", "public, max-age=31536000");
+      },
+    })
+  );
 
   // Routes
-  app.use("/api/v1", routes);
+  app.use("/api/v1", baseRouter);
 
-  // Error handling
-  app.use(errorHandler);
-
+  // Add this at the end of your createApp function
+  app.use(errorHandler as unknown as express.ErrorRequestHandler);
   return app;
 };

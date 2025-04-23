@@ -1,14 +1,28 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { Navbar } from "../components/navbar/Navbar";
-import { navbarItems } from "../config/constants";
+import { NAVBAR_ITEMS } from "../config/constants";
 
-export const MainLayout: React.FC = () => {
+interface MainLayoutProps {
+  children?: React.ReactNode;
+  fullWidth?: boolean;
+}
+
+export const MainLayout: React.FC<MainLayoutProps> = ({
+  children,
+  fullWidth = false,
+}) => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar items={navbarItems} />
-      <main className="flex-1 container mx-auto p-4">
-        <Outlet />
+      <Navbar items={NAVBAR_ITEMS} />
+      <main className="flex-1">
+        <div
+          className={`container mx-auto ${
+            fullWidth ? "" : "max-w-7xl px-4 md:px-6 lg:px-8 pb-12 mt-8"
+          } `}
+        >
+          {children || <Outlet />}
+        </div>
       </main>
     </div>
   );

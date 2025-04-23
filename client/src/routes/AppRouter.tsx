@@ -15,12 +15,16 @@ export const AppRouter: React.FC = () => {
     <Router>
       <Suspense fallback={<Loader />}>
         <Routes>
-          <Route element={<MainLayout />}>
-            {publicRoutes.map(({ path, element }) => (
+          <Route>
+            {publicRoutes.map(({ path, element, fullWidth }) => (
               <Route
                 key={path}
                 path={path}
-                element={React.createElement(element)}
+                element={
+                  <MainLayout fullWidth={fullWidth}>
+                    {React.createElement(element)}
+                  </MainLayout>
+                }
               />
             ))}
           </Route>

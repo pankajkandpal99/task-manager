@@ -3,9 +3,11 @@ import { User } from "@prisma/client";
 
 declare global {
   namespace Express {
-    interface Request {
+    export interface Request {
       context: RequestContext;
       user?: User;
+      files?: any;
+      imageVariants?: any;
     }
   }
 }

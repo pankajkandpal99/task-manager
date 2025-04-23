@@ -1,14 +1,12 @@
 import { createApp } from "./app";
-import { loadEnv } from "./config/env";
-import prisma, { connectDB } from "./prisma/client";
+import { env } from "./config/env";
+import { databaseConnection } from "./lib/db";
 import { logger } from "./utils/logger";
 
 const startServer = async () => {
   try {
-    const env = loadEnv();
-    const app = createApp();
-
-    await connectDB();
+    const app = await createApp();
+    await databaseConnection.connect();
 
     const server = app.listen(env.PORT, () => {
       logger.info(`Server running in ${env.NODE_ENV} mode on port ${env.PORT}`);
@@ -17,7 +15,7 @@ const startServer = async () => {
     process.on("SIGTERM", () => {
       logger.info("SIGTERM received: closing server");
       server.close(async () => {
-        await prisma.$disconnect();
+        await databaseConnection.disconnect();
         logger.info("Server closed");
         process.exit(0);
       });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -20,45 +20,67 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Loader } from "../general/Loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   registerFormSchema,
   RegisterFormValues,
 } from "../../schema/authSchema";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { registerUser, resetRegistration } from "../../features/auth/auth.slice";
+import { Eye, EyeOff } from "lucide-react";
 
 const RegisterForm: React.FC = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error, registered } = useAppSelector((state) => state.auth);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
-      username: "",
-      email: "",
+      username: undefined,
+      phoneNumber: "",
+      email: undefined,
       password: "",
       confirmPassword: "",
     },
   });
 
   const onSubmit = async (data: RegisterFormValues) => {
-    setLoading(true);
-    setError(null);
-    try {
-      console.log("Form data:", data);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Registration successful");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong!");
-    } finally {
-      setLoading(false);
-    }
+    await dispatch(registerUser(data));
   };
+
+  useEffect(() => {
+    if (registered) {
+      navigate("/login", {
+        state: {
+          message: "Registration successful! Please login.",
+          registeredEmail: form.getValues("email"),
+        },
+        replace: true,
+      });
+
+      form.reset();
+      dispatch(resetRegistration());
+    }
+  }, [registered, navigate, form, dispatch]);
+
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      if (error) {
+        dispatch(resetRegistration());
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, error, dispatch]);
 
   return (
     <div className="flex items-center justify-center p-4 sm:px-6 md:px-8">
       <Card className="w-full max-w-md mx-auto shadow-lg p-4 sm:p-6">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-blue-600">
+          <CardTitle className="text-2xl font-bold text-primary">
             Create an Account
           </CardTitle>
           <CardDescription>
@@ -77,15 +99,23 @@ const RegisterForm: React.FC = () => {
               <FormField
                 control={form.control}
                 name="username"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium">
                       Username
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your username" {...field} />
+                      <Input
+                        placeholder="Enter your username"
+                        {...field}
+                        className={`text-sm pr-10 ${
+                          fieldState.error
+                            ? "border-red-400 focus-visible:ring-red-400"
+                            : ""
+                        }`}
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -93,13 +123,59 @@ const RegisterForm: React.FC = () => {
               <FormField
                 control={form.control}
                 name="email"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium">Email</FormLabel>
+                    <div className="flex justify-between gap-1">
+                      <FormLabel className="text-sm font-medium">
+                        Email
+                      </FormLabel>
+                      <span className="text-xs text-muted-foreground">
+                        (optional)
+                      </span>
+                    </div>
                     <FormControl>
-                      <Input placeholder="Enter your email" {...field} />
+                      <Input
+                        placeholder="Enter your email"
+                        {...field}
+                        className={`text-sm pr-10 ${
+                          fieldState.error
+                            ? "border-red-400 focus-visible:ring-red-400"
+                            : ""
+                        }`}
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field, fieldState }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel className="text-sm font-medium">
+                      Phone Number
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter phone number"
+                        {...field}
+                        className={`text-sm pr-10 ${
+                          fieldState.error
+                            ? "border-red-400 focus-visible:ring-red-400"
+                            : ""
+                        }`}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, "");
+                          form.setValue("phoneNumber", value.slice(0, 10));
+                        }}
+                        value={field.value}
+                        type="tel"
+                        maxLength={10}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -107,19 +183,39 @@ const RegisterForm: React.FC = () => {
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium">
                       Password
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Enter your password"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your password"
+                          className={`text-sm pr-10 ${
+                            fieldState.error
+                              ? "border-red-400 focus-visible:ring-red-400"
+                              : ""
+                          }`}
+                          {...field}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:bg-transparent hover:text-muted-foreground cursor-pointer"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -127,26 +223,48 @@ const RegisterForm: React.FC = () => {
               <FormField
                 control={form.control}
                 name="confirmPassword"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium">
                       Confirm Password
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Confirm your password"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Confirm your password"
+                          className={`text-sm pr-10 ${
+                            fieldState.error
+                              ? "border-red-400 focus-visible:ring-red-400"
+                              : ""
+                          }`}
+                          {...field}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:bg-transparent hover:text-muted-foreground cursor-pointer"
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
 
               <Button
                 type="submit"
-                className="w-full mt-4 bg-blue-600 hover:bg-blue-500 cursor-pointer"
+                className="w-full mt-4 bg-primary hover:bg-green-400 cursor-pointer"
                 disabled={loading}
               >
                 {loading ? <Loader size="small" /> : "Register"}
@@ -159,7 +277,7 @@ const RegisterForm: React.FC = () => {
           <span>Already have an account?</span>
           <Link
             to="/login"
-            className="text-blue-600 font-medium hover:underline"
+            className="text-primary font-medium hover:underline"
           >
             Log in
           </Link>

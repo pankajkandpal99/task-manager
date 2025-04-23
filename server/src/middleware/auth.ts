@@ -1,31 +1,47 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { loadEnv } from "../config/env";
-import { ResponseService } from "../services/response.service";
+import { ApiResponseService } from "../services/response.service";
+import { env } from "../config/env";
+import { ROLE } from "../config/constants";
 
 export const requireAuth = (
-  req: Request,
+  req: Request & { context: { user: any } },
   res: Response,
   next: NextFunction
 ) => {
-  const env = loadEnv();
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
-    return ResponseService.error(res, "Unauthorized", 401);
+    return ApiResponseService.error(res, "Unauthorized", 401);
   }
 
   const token = authHeader.split(" ")[1];
+  // console.log("token in server : ", token);
 
-  jwt.verify(token, env.JWT_SECRET, (err: any, decoded: any) => {
-    if (err) return ResponseService.error(res, "Invalid token", 403);
+  try {
+    const decoded = jwt.verify(token, env.JWT_SECRET) as {
+      userId: string;
+      email?: string;
+      role?: ROLE;
+    };
 
+    // Add user to request context
     req.context.user = {
-      id: decoded.sub,
-      email: decoded.email,
-      role: decoded.role,
+      id: decoded.userId,
+      email: decoded.email || "",
+      role: decoded.role || "USER",
     };
 
     next();
-  });
+  } catch (err) {
+    console.log("error inside token catch ");
+
+    if (err instanceof jwt.TokenExpiredError) {
+      return ApiResponseService.error(res, "Token expired", 401);
+    }
+    if (err instanceof jwt.JsonWebTokenError) {
+      return ApiResponseService.error(res, "Invalid token", 403);
+    }
+    return ApiResponseService.error(res, "Authentication failed", 500);
+  }
 };
