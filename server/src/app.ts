@@ -1,41 +1,36 @@
 import express from "express";
-import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { contextMiddleware } from "./middleware/context";
-import baseRouter from "./api/v1/routes";
-import { databaseConnection } from "./lib/db";
-import { errorHandler } from "./error-handler/error-handler";
-import { corsOptions, staticCorsOptions } from "./config/corsOptions";
-import path from "path";
+import morgan from "morgan";
+import routes from "./routes/index";
+import errorHandler from "./middlewares/error.middleware";
+import config from "@config/env";
+import connectDB from "./lib/db";
 
-export const createApp = async () => {
-  const app = express();
-  const db = databaseConnection.getConnection();
+const app = express();
+connectDB();
 
-  // Middlewares
-  app.use(express.json());
-  app.use(cors(corsOptions));
-  app.use(cookieParser());
-  app.use(helmet());
-  app.use(contextMiddleware(db));
+// Middlewares
+app.use(express.json());
+app.use(
+  cors({
+    origin: config.CLIENT_URL,
+    credentials: true,
+  })
+);
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(morgan("dev"));
 
-  const uploadsPath = path.join(__dirname, "../uploads");
-  app.use(
-    "/uploads",
-    cors(staticCorsOptions),
-    express.static(uploadsPath, {
-      setHeaders: (res, path) => {
-        res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
-        res.setHeader("Cache-Control", "public, max-age=31536000");
-      },
-    })
-  );
+// CORS configuration
 
-  // Routes
-  app.use("/api/v1", baseRouter);
+// Routes
+app.use("/api/v1", routes);
 
-  // Add this at the end of your createApp function
-  app.use(errorHandler as unknown as express.ErrorRequestHandler);
-  return app;
-};
+app.use(errorHandler);
+
+app.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`);
+});
+
+export default app;

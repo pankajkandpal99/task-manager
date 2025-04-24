@@ -28,11 +28,11 @@ export const NavbarItem: React.FC<NavbarItemProps> = ({
         to={item.href}
         onClick={onClick}
         className={cn(
-          "block px-3 py-2 text-sm transition-colors",
-          "hover:bg-[#121a2a]/50 rounded-lg",
+          "block px-3 py-2 text-base transition-colors",
+          "rounded-lg",
           isActive
-            ? "text-[#6FFFB4] font-semibold"
-            : "text-[#94a3b8] hover:text-white",
+            ? "text-primary font-semibold"
+            : "text-gray-700 hover:text-gray-950",
           isMobile ? "text-lg py-3" : ""
         )}
         aria-current={isActive ? "page" : undefined}
@@ -40,7 +40,7 @@ export const NavbarItem: React.FC<NavbarItemProps> = ({
         {item.label}
         {isActive && (
           <motion.div
-            className="absolute bottom-0 left-0 w-full h-0.5 bg-[#6FFFB4]"
+            className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"
             layoutId="underline"
           />
         )}

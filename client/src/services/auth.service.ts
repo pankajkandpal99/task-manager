@@ -4,7 +4,7 @@ import { API_ENDPOINTS } from "../api/apiConfig";
 import { API_BASE_URL } from "../config/config";
 
 export const apiClient = axios.create({
-  baseURL: `${API_BASE_URL}/api/v1`,
+  baseURL: `${API_BASE_URL}/`,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -16,12 +16,14 @@ export const AuthService = {
   async register(data: RegisterFormValues) {
     try {
       const payload = {
-        username: data.username,
+        name: data.name,
         email: data.email,
+        country: data.country,
         password: data.password,
-        confirmPassword: data.password,
-        phoneNumber: data.phoneNumber,
+        confirmPassword: data.confirmPassword,
       };
+
+      console.log("Auth Service data : ", payload);
 
       const response = await apiClient.post(
         API_ENDPOINTS.AUTH.REGISTER,
@@ -31,11 +33,8 @@ export const AuthService = {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const serverError = error.response.data;
-        // console.log("Server Error Response:", serverError);
-
         throw new Error(serverError.error || "Registration failed");
       }
-
       throw new Error("Network error occurred. Please try again.");
     }
   },
@@ -43,7 +42,7 @@ export const AuthService = {
   async login(data: LoginFormValues) {
     try {
       const payload = {
-        phoneNumber: data.phoneNumber,
+        email: data.email,
         password: data.password,
       };
 
@@ -52,11 +51,8 @@ export const AuthService = {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const serverError = error.response.data;
-        // console.log("Server Error Response:", serverError);
-
-        throw new Error(serverError.error || "Registration failed");
+        throw new Error(serverError.error || "Login failed");
       }
-
       throw new Error("Network error occurred. Please try again.");
     }
   },

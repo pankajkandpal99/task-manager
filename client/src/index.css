@@ -5,40 +5,47 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: #6fffb4; /* Your original color for "Real Cash" */
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: #4fd89c; /* A slightly darker shade of #6FFFB4 */
+  
+  /* Light Theme (default) */
+  --background: oklch(0.985 0 0); /* White background */
+  --foreground: oklch(0.141 0.005 285.823); /* Dark text */
+  --card: oklch(0.95 0 0); /* Slightly off-white cards */
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(0.95 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: #2563eb; /* Blue primary color for light theme */
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: #1d4ed8; /* Darker blue for secondary */
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.488 0.243 264.376);
+  --muted: oklch(0.9 0 0);
+  --muted-foreground: oklch(0.4 0.015 286.067);
+  --accent: #3b82f6; /* Accent blue */
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.552 0.016 285.938);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --border: oklch(0 0 0 / 10%);
+  --input: oklch(0 0 0 / 15%);
+  --ring: #3b82f6; /* Blue ring color */
+  
+  /* Chart colors for light theme */
+  --chart-1: #2563eb;
+  --chart-2: #1d4ed8;
+  --chart-3: #1e40af;
+  --chart-4: #1e3a8a;
+  --chart-5: #172554;
+  
+  /* Sidebar for light theme */
+  --sidebar: oklch(0.95 0 0);
+  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-primary: #2563eb;
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.552 0.016 285.938);
+  --sidebar-accent: oklch(0.9 0 0);
+  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-border: oklch(0 0 0 / 10%);
+  --sidebar-ring: #3b82f6;
 }
 
 .dark {
+  /* Dark Theme (your original colors) */
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
@@ -124,12 +131,12 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: var(--muted);
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #6fffb4;
+  background: var(--primary);
   border-radius: 3px;
 }
 
@@ -148,6 +155,6 @@
   }
 
   body {
-    @apply bg-gradient-to-br from-[#0a101f] to-[#060d1b] text-foreground;
+    @apply bg-background text-foreground;
   }
 }

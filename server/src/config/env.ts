@@ -1,40 +1,25 @@
-import { z } from "zod";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-const envSchema = z.object({
-  NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default("development"),
-  PORT: z.string().default("8800"),
-  JWT_SECRET: z.string(),
-  DATABASE_URL: z.string(),
-  COOKIE_DOMAIN: z.string(),
-  ALLOWED_ORIGINS: z.string(),
-  BASE_URL: z.string(),
-});
+interface Config {
+  PORT: number;
+  MONGODB_URI: string;
+  JWT_SECRET: string;
+  JWT_EXPIRES_IN: string;
+  NODE_ENV: string;
+  CLIENT_URL: string;
+  MY_BACKEND_URL: string;
+}
 
-export type Env = z.infer<typeof envSchema>;
+const config: Config = {
+  PORT: parseInt(process.env.PORT || "5000"),
+  MONGODB_URI: process.env.MONGODB_URI || "",
+  JWT_SECRET: process.env.JWT_SECRET || "your-secret-key",
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "1d",
+  NODE_ENV: process.env.NODE_ENV || "development",
+  CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
+  MY_BACKEND_URL: process.env.MY_BACKEND_URL || "http://localhost:8080",
+};
 
-export const env: Env = (() => {
-  try {
-    return envSchema.parse({
-      NODE_ENV: process.env.NODE_ENV as "development" | "production" | "test",
-      PORT: process.env.PORT || "3000",
-      JWT_SECRET: process.env.JWT_SECRET,
-      DATABASE_URL: process.env.DATABASE_URL,
-      COOKIE_DOMAIN: process.env.COOKIE_DOMAIN,
-      ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || "",
-      BASE_URL: process.env.BASE_URL || "http://localhost:8800",
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error("Environment Variable Validation Failed:");
-      error.errors.forEach((err) => {
-        console.error(`- ${err.path.join(".")}: ${err.message}`);
-      });
-      throw new Error(`Invalid environment variables. Check your .env file.`);
-    }
-    throw error;
-  }
-})();
+export default config;

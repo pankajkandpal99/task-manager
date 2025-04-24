@@ -2,10 +2,7 @@ import React, { lazy } from "react";
 
 const Home = lazy(() => import("../pages/Home"));
 const About = lazy(() => import("../pages/About"));
-const AdminDashboard = lazy(() => import("../pages/AdminDashboard"));
-const Games = lazy(() => import("../pages/Games"));
-const Contest = lazy(() => import("../pages/Contest"));
-const Leaderboard = lazy(() => import("../pages/Leaderboard"));
+const AdminDashboard = lazy(() => import("../pages/Dashboard"));
 
 const Support = lazy(() => import("../pages/Support"));
 const Services = lazy(() => import("../pages/Services"));
@@ -23,9 +20,6 @@ interface RouteConfig {
 export const publicRoutes: RouteConfig[] = [
   { path: "/", element: Home, fullWidth: true },
   { path: "/about", element: About },
-  { path: "/games", element: Games },
-
-  { path: "/contest", element: Contest },
   { path: "/support", element: Support },
   { path: "/services", element: Services },
   { path: "/contact", element: Contact },
@@ -37,8 +31,7 @@ export const authRoutes: RouteConfig[] = [
 ];
 
 export const protectedRoutes: RouteConfig[] = [
-  { path: "/leaderboard", element: Leaderboard },
-  { path: "/admin-dashboard", element: AdminDashboard },
+  { path: "/dashboard", element: AdminDashboard },
 ];
 
 export const notFoundRoute: RouteConfig = { path: "*", element: NotFound };

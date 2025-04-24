@@ -26,8 +26,12 @@ import {
   RegisterFormValues,
 } from "../../schema/authSchema";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { registerUser, resetRegistration } from "../../features/auth/auth.slice";
+import {
+  registerUser,
+  resetRegistration,
+} from "../../features/auth/auth.slice";
 import { Eye, EyeOff } from "lucide-react";
+import CountrySelect from "../general/CountrySelectComponent";
 
 const RegisterForm: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -40,9 +44,9 @@ const RegisterForm: React.FC = () => {
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
-      username: undefined,
-      phoneNumber: "",
-      email: undefined,
+      name: "",
+      email: "",
+      country: "",
       password: "",
       confirmPassword: "",
     },
@@ -95,18 +99,22 @@ const RegisterForm: React.FC = () => {
             </div>
           )}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+              noValidate
+            >
               <FormField
                 control={form.control}
-                name="username"
+                name="name"
                 render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium">
-                      Username
+                      Full Name
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter your username"
+                        placeholder="Enter your full name"
                         {...field}
                         className={`text-sm pr-10 ${
                           fieldState.error
@@ -125,14 +133,7 @@ const RegisterForm: React.FC = () => {
                 name="email"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <div className="flex justify-between gap-1">
-                      <FormLabel className="text-sm font-medium">
-                        Email
-                      </FormLabel>
-                      <span className="text-xs text-muted-foreground">
-                        (optional)
-                      </span>
-                    </div>
+                    <FormLabel className="text-sm font-medium">Email</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter your email"
@@ -151,28 +152,18 @@ const RegisterForm: React.FC = () => {
 
               <FormField
                 control={form.control}
-                name="phoneNumber"
+                name="country"
                 render={({ field, fieldState }) => (
-                  <FormItem className="flex-1">
+                  <FormItem>
                     <FormLabel className="text-sm font-medium">
-                      Phone Number
+                      Country
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter phone number"
-                        {...field}
-                        className={`text-sm pr-10 ${
-                          fieldState.error
-                            ? "border-red-400 focus-visible:ring-red-400"
-                            : ""
-                        }`}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, "");
-                          form.setValue("phoneNumber", value.slice(0, 10));
-                        }}
+                      <CountrySelect
                         value={field.value}
-                        type="tel"
-                        maxLength={10}
+                        onChange={field.onChange}
+                        disabled={loading}
+                        error={!!fieldState.error}
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
@@ -264,7 +255,7 @@ const RegisterForm: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full mt-4 bg-primary hover:bg-green-400 cursor-pointer"
+                className="w-full mt-4 bg-primary cursor-pointer"
                 disabled={loading}
               >
                 {loading ? <Loader size="small" /> : "Register"}

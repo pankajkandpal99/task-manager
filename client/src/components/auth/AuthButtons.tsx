@@ -13,9 +13,9 @@ import { ChevronDown, LogOut, LogIn, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { RootState } from "../../store";
 import { clearUser } from "../../features/user/user.slice";
 import { logoutClient } from "../../utils/authUtils";
+import { RootState } from "../../store";
 
 interface AuthButtonsProps {
   isMobile?: boolean;
@@ -146,7 +146,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
               className="relative group"
             >
               <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-60 group-hover:opacity-100 transition duration-200" />
-              <div className="relative bg-[#6FFFB4] text-[#0a101f] px-6 py-2 rounded-full font-semibold group-hover:bg-[#8FFFCC] transition-all cursor-pointer">
+              <div className="relative bg-white text-primary px-6 py-2 rounded-full font-semibold group-hover:bg-white transition-all cursor-pointer">
                 Sign in
               </div>
             </motion.button>

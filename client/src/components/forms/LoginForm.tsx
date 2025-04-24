@@ -37,7 +37,7 @@ const LoginForm: React.FC = () => {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      phoneNumber: "",
+      email: "",
       password: "",
     },
   });
@@ -50,12 +50,7 @@ const LoginForm: React.FC = () => {
     if (authenticated) {
       navigate("/", { replace: true });
     }
-  }, [authenticated, navigate, dispatch]);
-
-  // useEffect(() => {
-  //   const subscription = form.watch();
-  //   return () => subscription.unsubscribe();
-  // }, [form, error, dispatch]);
+  }, [authenticated, navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4 py-8 sm:px-6 md:px-8">
@@ -75,27 +70,25 @@ const LoginForm: React.FC = () => {
             </div>
           )}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+              noValidate
+            >
               <FormField
                 control={form.control}
-                name="phoneNumber"
+                name="email"
                 render={({ field }) => (
                   <FormItem className="flex-1">
                     <FormLabel className="text-sm font-medium">
-                      Phone Number
+                      Email Address
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter phone number"
+                        placeholder="Enter your email"
                         {...field}
                         className="text-sm"
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, "");
-                          form.setValue("phoneNumber", value.slice(0, 10));
-                        }}
-                        value={field.value}
-                        type="tel"
-                        maxLength={10}
+                        type="email"
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
@@ -153,7 +146,7 @@ const LoginForm: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full mt-6 bg-primary hover:bg-green-400 cursor-pointer"
+                className="w-full mt-6 bg-primary cursor-pointer"
                 disabled={loading}
               >
                 {loading ? <Loader size="small" /> : "Log In"}

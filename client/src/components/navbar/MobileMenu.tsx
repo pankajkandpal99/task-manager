@@ -47,20 +47,20 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
       <Drawer>
         <DrawerTrigger asChild>
           <button
-            className="text-white p-2 rounded-lg hover:bg-[#121a2a]/50 transition-colors"
+            className="text-foreground p-2 rounded-lg hover:bg-muted/50 transition-colors"
             aria-label="Toggle mobile menu"
           >
             <Menu size={24} strokeWidth={2} />
           </button>
         </DrawerTrigger>
         <DrawerPortal>
-          <DrawerContent className="fixed inset-y-0 right-0 h-full w-72 max-h-screen bg-[#0a101f] border-l border-[#1e293b] shadow-2xl z-50">
+          <DrawerContent className="fixed inset-y-0 right-0 h-full w-72 max-h-screen bg-background/90 dark:bg-[#0a101f]/90 border-l border-border/30 backdrop-blur-lg z-50">
             <div className="h-full flex flex-col max-h-screen">
               <div className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="relative">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-70" />
-                    <div className="relative bg-[#0a101f] rounded-full p-1">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-full blur opacity-70" />
+                    <div className="relative bg-background rounded-full p-1">
                       <CompanyLogo
                         type="image"
                         src="../../../../public/Final GHG Logo.png"
@@ -70,11 +70,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                       />
                     </div>
                   </div>
-                  <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6FFFB4] to-[#3694FF]">
+                  <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
                     GameHiGame
                   </span>
                 </div>
-                <DrawerClose className="p-2 text-[#94a3b8] hover:text-white rounded-full hover:bg-[#121a2a] transition-colors">
+                <DrawerClose className="p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted transition-colors">
                   <X size={20} />
                 </DrawerClose>
               </div>
@@ -84,7 +84,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                   initial="closed"
                   animate="open"
                   variants={itemVariants}
-                  className={`mb-4 bg-[#121a2a] p-4 rounded-lg border border-[#1e293b] shadow-md ${
+                  className={`mb-4 bg-muted/80 p-4 rounded-lg border border-border shadow-md ${
                     isGuest ? "opacity-75" : ""
                   }`}
                 >
@@ -92,50 +92,36 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                     <div className="relative">
                       <div
                         className={`absolute -inset-1 ${
-                          isGuest ? "bg-gray-500/20" : "bg-[#3694FF]/20"
+                          isGuest ? "bg-gray-500/20" : "bg-accent/20"
                         } rounded-full blur-sm`}
                       ></div>
                       <div
                         className={`relative flex items-center justify-center w-10 h-10 ${
-                          isGuest ? "bg-gray-500/20" : "bg-[#3694FF]/20"
+                          isGuest ? "bg-gray-500/20" : "bg-accent/20"
                         } rounded-full`}
                       >
                         <User
                           size={20}
-                          className={
-                            isGuest ? "text-gray-400" : "text-[#3694FF]"
-                          }
+                          className={isGuest ? "text-gray-400" : "text-accent"}
                         />
                       </div>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-base font-bold text-white">
+                      <span className="text-base font-bold text-foreground">
                         {displayName}
                       </span>
-                      <span className="text-xs text-[#94a3b8]">
+                      <span className="text-xs text-muted-foreground">
                         {isGuest ? "Not logged in" : "Logged in"}
                       </span>
                     </div>
                   </div>
 
-                  {/* {currentUser.role === "ADMIN" && (
-                    <Link to="/admin-dashboard">
-                      <DropdownMenuItem className="cursor-pointer text-blue-500 focus:text-blue-500 focus:bg-blue-500/10">
-                        <ShieldCheck
-                          size={16}
-                          strokeWidth={2}
-                          className="mr-2 opacity-60"
-                        />
-                        <span>Admin Dashboard</span>
-                      </DropdownMenuItem>
-                    </Link>
-                  )} */}
-
-                  {/* Only show email section if email exists */}
                   {displayEmail && (
-                    <div className="bg-[#0a101f]/60 p-2 rounded-md">
-                      <span className="text-sm text-[#94a3b8]">Email</span>
-                      <div className="text-sm font-medium text-white truncate">
+                    <div className="bg-background/60 p-2 rounded-md">
+                      <span className="text-sm text-muted-foreground">
+                        Email
+                      </span>
+                      <div className="text-sm font-medium text-foreground truncate">
                         {displayEmail}
                       </div>
                     </div>
@@ -144,20 +130,20 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
 
                 {currentUser?.role === "ADMIN" && (
                   <Link to="/admin-dashboard" className="block mt-3 mb-1">
-                    <div className="flex items-center gap-2 p-2 rounded-md bg-gradient-to-r from-[#6FFFB4]/10 to-[#3694FF]/10 border border-[#1e293b] hover:bg-[#121a2a]/80 transition-all cursor-pointer">
+                    <div className="flex items-center gap-2 p-2 rounded-md bg-gradient-to-r from-primary/10 to-accent/10 border border-border hover:bg-muted/80 transition-all cursor-pointer">
                       <ShieldCheck
                         size={16}
                         strokeWidth={2}
-                        className="text-[#6FFFB4]"
+                        className="text-primary"
                       />
-                      <span className="text-sm font-medium bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] bg-clip-text text-transparent">
+                      <span className="text-sm font-medium bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                         Admin Dashboard
                       </span>
                     </div>
                   </Link>
                 )}
 
-                <div className="h-px w-full bg-gradient-to-r from-[#6FFFB4]/20 via-[#3694FF]/20 to-[#6FFFB4]/20 my-6"></div>
+                <div className="h-px w-full bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 my-6"></div>
 
                 <nav className="space-y-1 pb-6">
                   {items.map((item, index) => (
@@ -169,7 +155,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                       custom={index}
                     >
                       <DrawerClose asChild>
-                        <div className="py-1 px-2 text-sm rounded-lg hover:bg-[#121a2a]/60 transition-colors">
+                        <div className="py-1 px-2 text-sm rounded-lg hover:bg-muted/60 transition-colors">
                           <NavbarItem item={item} isMobile />
                         </div>
                       </DrawerClose>
@@ -177,7 +163,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                   ))}
                 </nav>
 
-                <div className="border-t border-[#1e293b]/30 bg-[#0a101f] p-4">
+                <div className="border-t border-border/30 bg-background/80 p-4">
                   <motion.div
                     initial="closed"
                     animate="open"
