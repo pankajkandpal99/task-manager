@@ -3,7 +3,7 @@ import { NavbarItem } from "./NavbarItem";
 import { NavbarItemType } from "../../types/navbarTypes";
 import AuthButtons from "../auth/AuthButtons";
 import { motion } from "framer-motion";
-import { X, User, Menu, ShieldCheck } from "lucide-react";
+import { X, User, Menu } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import {
@@ -13,8 +13,6 @@ import {
   DrawerPortal,
   DrawerTrigger,
 } from "../ui/drawer";
-import { CompanyLogo } from "../logo/CompanyLogo";
-import { Link } from "react-router-dom";
 
 interface MobileMenuProps {
   items: NavbarItemType[];
@@ -24,8 +22,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
   const { authenticated } = useSelector((state: RootState) => state.auth);
   const { currentUser } = useSelector((state: RootState) => state.user);
 
-  const displayName =
-    currentUser?.username || currentUser?.phoneNumber || "Guest";
+  const displayName = currentUser?.name || "Guest";
   const displayEmail = currentUser?.email;
   const isGuest = !authenticated;
 
@@ -61,13 +58,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                   <div className="relative">
                     <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-full blur opacity-70" />
                     <div className="relative bg-background rounded-full p-1">
-                      <CompanyLogo
+                      {/* <CompanyLogo
                         type="image"
                         src="../../../../public/Final GHG Logo.png"
                         alt="GameHiGame logo"
                         size="md"
                         className="w-8 h-8"
-                      />
+                      /> */}
                     </div>
                   </div>
                   <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
@@ -128,7 +125,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                   )}
                 </motion.div>
 
-                {currentUser?.role === "ADMIN" && (
+                {/* {currentUser?.role === "ADMIN" && (
                   <Link to="/admin-dashboard" className="block mt-3 mb-1">
                     <div className="flex items-center gap-2 p-2 rounded-md bg-gradient-to-r from-primary/10 to-accent/10 border border-border hover:bg-muted/80 transition-all cursor-pointer">
                       <ShieldCheck
@@ -141,7 +138,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                       </span>
                     </div>
                   </Link>
-                )}
+                )} */}
 
                 <div className="h-px w-full bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 my-6"></div>
 

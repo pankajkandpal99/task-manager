@@ -5,7 +5,6 @@ import { NavbarItemType } from "../../types/navbarTypes";
 import AuthButtons from "../auth/AuthButtons";
 import MobileMenu from "./MobileMenu";
 import { motion } from "framer-motion";
-import { CompanyLogo } from "../logo/CompanyLogo";
 
 interface iAppNavbarProps {
   items: NavbarItemType[];
@@ -21,18 +20,18 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
             <div className="relative">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-full blur opacity-70 group-hover:opacity-100 transition duration-200"></div>
               <div className="relative bg-background rounded-full p-1">
-                <CompanyLogo
+                {/* <CompanyLogo
                   type="image"
                   src="../../../../public/Final GHG Logo.png"
                   alt="GL"
                   size="md"
                   className="w-10 h-10"
-                />
+                /> */}
               </div>
             </div>
           </motion.div>
           <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-            GameHiGame
+            TaskTracker
           </span>
         </Link>
 
