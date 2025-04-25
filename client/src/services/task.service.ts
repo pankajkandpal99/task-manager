@@ -30,9 +30,6 @@ export const TaskService = {
 
   async updateTask(data: Task, projectId: string): Promise<Task> {
     try {
-      console.log("data id ", data._id);
-      console.log("projectId", projectId);
-
       const payload = {
         title: data.title,
         description: data.description,

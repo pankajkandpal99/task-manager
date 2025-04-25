@@ -76,9 +76,6 @@ export const updateTask = async (req: Request, res: Response) => {
     const { projectId, taskId } = req.params;
     const taskData = req.body;
 
-    console.log("req.body", req.body);
-    console.log("req.params", req.params);
-
     if (!projectId || !taskId) {
       return res
         .status(400)
@@ -97,10 +94,7 @@ export const updateTask = async (req: Request, res: Response) => {
 
     if (!task) throw new NotFoundError("Task not found");
 
-    return res.json({
-      ...task.toObject(),
-      id: task._id.toString(),
-    });
+    return res.json(task.toObject());
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
       error: error.message || "Failed to update task",
