@@ -2,7 +2,7 @@ import React, { lazy } from "react";
 
 const Home = lazy(() => import("../pages/Home"));
 const About = lazy(() => import("../pages/About"));
-const AdminDashboard = lazy(() => import("../pages/Dashboard"));
+const Dashboard = lazy(() => import("../pages/Dashboard"));
 
 const Support = lazy(() => import("../pages/Support"));
 const Services = lazy(() => import("../pages/Services"));
@@ -31,7 +31,7 @@ export const authRoutes: RouteConfig[] = [
 ];
 
 export const protectedRoutes: RouteConfig[] = [
-  { path: "/dashboard", element: AdminDashboard },
+  { path: "/dashboard", element: Dashboard },
 ];
 
 export const notFoundRoute: RouteConfig = { path: "*", element: NotFound };

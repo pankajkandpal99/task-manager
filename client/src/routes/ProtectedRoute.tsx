@@ -63,7 +63,7 @@ export const ProtectedRoute = () => {
   }
 
   return (
-    <MainLayout>
+    <MainLayout fullWidth={true}>
       <Outlet />
     </MainLayout>
   );

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+
 import { verifyToken } from "@utils/jwt";
 import ApiError from "@utils/apiError";
 import { ITokenPayload } from "@interfaces/user.interface";
@@ -12,7 +13,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const decoded = verifyToken(token);
-    (req as Request & { user: ITokenPayload }).user = decoded;
+    req.user = decoded as ITokenPayload;
     next();
   } catch (error) {
     return next(new ApiError(401, "Invalid or expired token"));

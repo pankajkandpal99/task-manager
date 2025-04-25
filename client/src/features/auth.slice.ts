@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { AuthService } from "../../services/auth.service";
-import { LoginFormValues, RegisterFormValues } from "../../schema/authSchema";
-import { verifyTokenClientSide } from "../../utils/authUtils";
-import { setUser } from "../user/user.slice";
+import { verifyTokenClientSide } from "../utils/authUtils";
+import { LoginFormValues, RegisterFormValues } from "../schema/authSchema";
+import { AuthService } from "../services/auth.service";
+import { setUser } from "./user.slice";
 
 interface AuthState {
   loading: boolean;
@@ -17,7 +17,7 @@ const initialState: AuthState = {
   error: null,
   registered: false,
   authenticated: false,
-  initialized: false, // Will be true after first auth check
+  initialized: false,
 };
 
 export const verifyAuth = createAsyncThunk<{ authenticated: boolean }>(

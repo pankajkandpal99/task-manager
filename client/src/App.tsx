@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { AppRouter } from "./routes/AppRouter";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
-import { verifyAuth } from "./features/auth/auth.slice";
 import { UserService } from "./services/user.service";
-import { setUser } from "./features/user/user.slice";
 import { Loader } from "./components/general/Loader";
+import { verifyAuth } from "./features/auth.slice";
+import { setUser } from "./features/user.slice";
 
 function App() {
   const dispatch = useAppDispatch();

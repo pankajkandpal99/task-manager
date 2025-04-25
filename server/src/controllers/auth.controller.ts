@@ -4,29 +4,29 @@ import { sendResponse } from "@utils/apiResponse";
 import { ROLE } from "@interfaces/user.interface";
 import ApiError from "@utils/apiError";
 import { authenticateUser, createUser } from "src/services/user.service";
+import config from "@config/env";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, email, password, country } = req.body;
+    // console.log("data : ", req.body);
 
-    console.log("data : ", req.body);
+    const user = await createUser({
+      name,
+      email,
+      password,
+      country,
+    });
 
-    // const user = await createUser({
-    //   name,
-    //   email,
-    //   password,
-    //   country,
-    // });
-
-    // sendResponse(res, 201, true, "Registration successful", {
-    //   user: {
-    //     _id: user._id,
-    //     name: user.name,
-    //     email: user.email,
-    //     country: user.country,
-    //     createdAt: user.createdAt,
-    //   },
-    // });
+    sendResponse(res, 201, true, "Registration successful", {
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        country: user.country,
+        createdAt: user.createdAt,
+      },
+    });
   } catch (error) {
     if (error instanceof ApiError) {
       return next(error);
@@ -46,12 +46,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       role: ROLE.USER,
     });
 
-    // Set token in HTTP-only cookie
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      httpOnly: false, // true only when server side token checking
+      secure: config.NODE_ENV === "production" ? true : false,
+      sameSite: config.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
     });
 
     sendResponse(res, 200, true, "Login successful", {

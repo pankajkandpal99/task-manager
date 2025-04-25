@@ -29,7 +29,6 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Find the selected country data
   const selectedCountry = COUNTRY_CODES.find(
     (country) => country.code === value
   );
@@ -84,7 +83,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
             {filteredCountries.map((country) => (
               <CommandItem
                 key={country.code}
-                value={country.code}
+                value={country.name}
                 onSelect={() => {
                   onChange(country.code);
                   setOpen(false);

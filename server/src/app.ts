@@ -22,10 +22,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
 
-// CORS configuration
-
 // Routes
-app.use("/api/v1", routes);
+app.use("/", routes);
 
 app.use(errorHandler);
 

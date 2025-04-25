@@ -12,8 +12,6 @@ interface iAppNavbarProps {
 }
 
 export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
-  const filteredItems = items.filter((item) => item.href !== "/dashboard");
-
   return (
     <nav className="sticky top-0 z-40 bg-background/80 dark:bg-[#0a101f]/80 backdrop-blur-md py-4 border-b border-border/30">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 flex justify-between items-center">
@@ -40,7 +38,7 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-4">
-          {filteredItems.map((item) => (
+          {items.map((item) => (
             <NavbarItem key={item.id} item={item} />
           ))}
         </div>
@@ -53,7 +51,7 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
 
           {/* Mobile Menu */}
           <div className="md:hidden">
-            <MobileMenu items={filteredItems} />
+            <MobileMenu items={items} />
           </div>
         </div>
       </div>

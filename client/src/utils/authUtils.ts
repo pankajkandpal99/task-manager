@@ -5,6 +5,8 @@ export const checkAuthCookie = (): boolean => {
 };
 
 export const getTokenFromCookie = (): string | null => {
+  if (typeof document === "undefined") return null;
+
   const cookieString = document.cookie; // More reliable cookie parsing
   const cookieArray = cookieString.split("; ");
   const tokenCookie = cookieArray.find((row) => row.startsWith("token="));

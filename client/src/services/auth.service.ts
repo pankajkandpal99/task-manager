@@ -23,8 +23,6 @@ export const AuthService = {
         confirmPassword: data.confirmPassword,
       };
 
-      console.log("Auth Service data : ", payload);
-
       const response = await apiClient.post(
         API_ENDPOINTS.AUTH.REGISTER,
         payload

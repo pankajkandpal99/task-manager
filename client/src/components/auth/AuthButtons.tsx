@@ -9,13 +9,13 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { ChevronDown, LogOut, LogIn, ShieldCheck } from "lucide-react";
+import { ChevronDown, LogOut, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { clearUser } from "../../features/user/user.slice";
 import { logoutClient } from "../../utils/authUtils";
 import { RootState } from "../../store";
+import { clearUser } from "../../features/user.slice";
 
 interface AuthButtonsProps {
   isMobile?: boolean;
@@ -29,10 +29,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
   const defaultAvatar =
     "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
   const userInitial =
-    currentUser?.username?.charAt(0) ||
-    currentUser?.email?.charAt(0) ||
-    currentUser?.phoneNumber?.charAt(0) ||
-    "G";
+    currentUser?.name.charAt(0) || currentUser?.email?.charAt(0) || "G";
 
   const handleSignOut = async () => {
     try {
@@ -86,8 +83,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
             >
               <Avatar>
                 <AvatarImage
-                  src={currentUser.avatar || defaultAvatar}
-                  alt={currentUser.username || "User"}
+                  src={defaultAvatar}
+                  alt={currentUser.name || "User"}
                 />
                 <AvatarFallback className="bg-[#3694FF]/20 text-[#3694FF]">
                   {userInitial.toUpperCase()}
@@ -104,7 +101,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
           <DropdownMenuContent className="w-56 mt-2" align="end">
             <DropdownMenuLabel className="flex flex-col">
               <span className="text-sm font-medium text-foreground">
-                {currentUser.username || currentUser.phoneNumber}
+                {currentUser?.name || "Guest"}
               </span>
               {currentUser.email && (
                 <span className="text-xs text-muted-foreground truncate">
@@ -114,19 +111,6 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false }) => {
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
-
-            {currentUser.role === "ADMIN" && (
-              <Link to="/admin-dashboard">
-                <DropdownMenuItem className="cursor-pointer text-blue-500 focus:text-blue-500 focus:bg-blue-500/10">
-                  <ShieldCheck
-                    size={16}
-                    strokeWidth={2}
-                    className="mr-2 opacity-60"
-                  />
-                  <span>Admin Dashboard</span>
-                </DropdownMenuItem>
-              </Link>
-            )}
 
             <DropdownMenuItem
               onClick={handleSignOut}

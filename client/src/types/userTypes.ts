@@ -34,25 +34,18 @@ export interface UserSession {
 
 export interface UserData {
   _id: string;
-  email?: string;
-  phoneNumber: string;
-  role: Role;
-  username?: string;
-  avatar?: string;
-  lastLogin?: Date;
-  lastActive?: Date;
-  isVerified: boolean;
-  provider?: AuthProvider;
-  providerId?: string;
-  gameProgress?: GameProgress;
-  preferences?: UserPreferences;
-  sessions?: UserSession[];
-  stats?: UserStats;
-  isGuest: boolean;
-  guestId?: string;
-  guestExpiresAt?: Date;
+  name: string;
+  email: string;
+  country: string;
+  projects: string[];
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface UserState {
+  currentUser: UserData | null;
+  loading: boolean;
+  error: string | null;
 }
 
 export interface UserState {
